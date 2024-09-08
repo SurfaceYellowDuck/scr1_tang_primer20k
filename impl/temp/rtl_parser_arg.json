@@ -1,0 +1,169 @@
+{
+ "Device" : "GW2A-18C",
+ "Files" : [
+  {
+   "Path" : "J:/FPGA/tst/scr1test/scr1test/src/ahb_lite_uart16550/src/ahb_lite_uart16550.v",
+   "Type" : "verilog"
+  },
+  {
+   "Path" : "J:/FPGA/tst/scr1test/scr1test/src/ahb_lite_uart16550/src/uart16550/raminfr.v",
+   "Type" : "verilog"
+  },
+  {
+   "Path" : "J:/FPGA/tst/scr1test/scr1test/src/ahb_lite_uart16550/src/uart16550/uart_defines.v",
+   "Type" : "verilog"
+  },
+  {
+   "Path" : "J:/FPGA/tst/scr1test/scr1test/src/ahb_lite_uart16550/src/uart16550/uart_receiver.v",
+   "Type" : "verilog"
+  },
+  {
+   "Path" : "J:/FPGA/tst/scr1test/scr1test/src/ahb_lite_uart16550/src/uart16550/uart_regs.v",
+   "Type" : "verilog"
+  },
+  {
+   "Path" : "J:/FPGA/tst/scr1test/scr1test/src/ahb_lite_uart16550/src/uart16550/uart_rfifo.v",
+   "Type" : "verilog"
+  },
+  {
+   "Path" : "J:/FPGA/tst/scr1test/scr1test/src/ahb_lite_uart16550/src/uart16550/uart_sync_flops.v",
+   "Type" : "verilog"
+  },
+  {
+   "Path" : "J:/FPGA/tst/scr1test/scr1test/src/ahb_lite_uart16550/src/uart16550/uart_tfifo.v",
+   "Type" : "verilog"
+  },
+  {
+   "Path" : "J:/FPGA/tst/scr1test/scr1test/src/ahb_lite_uart16550/src/uart16550/uart_transmitter.v",
+   "Type" : "verilog"
+  },
+  {
+   "Path" : "J:/FPGA/tst/scr1test/scr1test/src/core/pipeline/scr1_ipic.sv",
+   "Type" : "verilog"
+  },
+  {
+   "Path" : "J:/FPGA/tst/scr1test/scr1test/src/core/pipeline/scr1_pipe_csr.sv",
+   "Type" : "verilog"
+  },
+  {
+   "Path" : "J:/FPGA/tst/scr1test/scr1test/src/core/pipeline/scr1_pipe_exu.sv",
+   "Type" : "verilog"
+  },
+  {
+   "Path" : "J:/FPGA/tst/scr1test/scr1test/src/core/pipeline/scr1_pipe_hdu.sv",
+   "Type" : "verilog"
+  },
+  {
+   "Path" : "J:/FPGA/tst/scr1test/scr1test/src/core/pipeline/scr1_pipe_ialu.sv",
+   "Type" : "verilog"
+  },
+  {
+   "Path" : "J:/FPGA/tst/scr1test/scr1test/src/core/pipeline/scr1_pipe_idu.sv",
+   "Type" : "verilog"
+  },
+  {
+   "Path" : "J:/FPGA/tst/scr1test/scr1test/src/core/pipeline/scr1_pipe_ifu.sv",
+   "Type" : "verilog"
+  },
+  {
+   "Path" : "J:/FPGA/tst/scr1test/scr1test/src/core/pipeline/scr1_pipe_lsu.sv",
+   "Type" : "verilog"
+  },
+  {
+   "Path" : "J:/FPGA/tst/scr1test/scr1test/src/core/pipeline/scr1_pipe_mprf.sv",
+   "Type" : "verilog"
+  },
+  {
+   "Path" : "J:/FPGA/tst/scr1test/scr1test/src/core/pipeline/scr1_pipe_tdu.sv",
+   "Type" : "verilog"
+  },
+  {
+   "Path" : "J:/FPGA/tst/scr1test/scr1test/src/core/pipeline/scr1_pipe_top.sv",
+   "Type" : "verilog"
+  },
+  {
+   "Path" : "J:/FPGA/tst/scr1test/scr1test/src/core/primitives/scr1_cg.sv",
+   "Type" : "verilog"
+  },
+  {
+   "Path" : "J:/FPGA/tst/scr1test/scr1test/src/core/primitives/scr1_reset_cells.sv",
+   "Type" : "verilog"
+  },
+  {
+   "Path" : "J:/FPGA/tst/scr1test/scr1test/src/core/scr1_clk_ctrl.sv",
+   "Type" : "verilog"
+  },
+  {
+   "Path" : "J:/FPGA/tst/scr1test/scr1test/src/core/scr1_core_top.sv",
+   "Type" : "verilog"
+  },
+  {
+   "Path" : "J:/FPGA/tst/scr1test/scr1test/src/core/scr1_dm.sv",
+   "Type" : "verilog"
+  },
+  {
+   "Path" : "J:/FPGA/tst/scr1test/scr1test/src/core/scr1_dmi.sv",
+   "Type" : "verilog"
+  },
+  {
+   "Path" : "J:/FPGA/tst/scr1test/scr1test/src/core/scr1_scu.sv",
+   "Type" : "verilog"
+  },
+  {
+   "Path" : "J:/FPGA/tst/scr1test/scr1test/src/core/scr1_tapc.sv",
+   "Type" : "verilog"
+  },
+  {
+   "Path" : "J:/FPGA/tst/scr1test/scr1test/src/core/scr1_tapc_shift_reg.sv",
+   "Type" : "verilog"
+  },
+  {
+   "Path" : "J:/FPGA/tst/scr1test/scr1test/src/core/scr1_tapc_synchronizer.sv",
+   "Type" : "verilog"
+  },
+  {
+   "Path" : "J:/FPGA/tst/scr1test/scr1test/src/tang20k_scr1.sv",
+   "Type" : "verilog"
+  },
+  {
+   "Path" : "J:/FPGA/tst/scr1test/scr1test/src/top/scr1_dmem_ahb.sv",
+   "Type" : "verilog"
+  },
+  {
+   "Path" : "J:/FPGA/tst/scr1test/scr1test/src/top/scr1_dmem_router.sv",
+   "Type" : "verilog"
+  },
+  {
+   "Path" : "J:/FPGA/tst/scr1test/scr1test/src/top/scr1_dp_memory.sv",
+   "Type" : "verilog"
+  },
+  {
+   "Path" : "J:/FPGA/tst/scr1test/scr1test/src/top/scr1_imem_ahb.sv",
+   "Type" : "verilog"
+  },
+  {
+   "Path" : "J:/FPGA/tst/scr1test/scr1test/src/top/scr1_imem_router.sv",
+   "Type" : "verilog"
+  },
+  {
+   "Path" : "J:/FPGA/tst/scr1test/scr1test/src/top/scr1_tcm.sv",
+   "Type" : "verilog"
+  },
+  {
+   "Path" : "J:/FPGA/tst/scr1test/scr1test/src/top/scr1_timer.sv",
+   "Type" : "verilog"
+  },
+  {
+   "Path" : "J:/FPGA/tst/scr1test/scr1test/src/top/scr1_top_ahb.sv",
+   "Type" : "verilog"
+  }
+ ],
+ "IncludePath" : [
+
+ ],
+ "LoopLimit" : 2000,
+ "ResultFile" : "J:/FPGA/tst/scr1test/scr1test/impl/temp/rtl_parser.result",
+ "Top" : "",
+ "VerilogStd" : "sysv",
+ "VhdlStd" : "vhdl_93"
+}

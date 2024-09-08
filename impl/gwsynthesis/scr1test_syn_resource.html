@@ -1,0 +1,336 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html>
+<head>
+<title>Hierarchy Module Resource</title>
+<style type="text/css">
+body { font-family: Verdana, Arial, sans-serif; font-size: 14px; }
+div#main_wrapper{ width: 100%; }
+h1 {text-align: center; }
+h1 {margin-top: 36px; }
+table, th, td { border: 1px solid #aaa; }
+table { border-collapse:collapse; margin-top: 10px; margin-bottom: 20px; width: 100%; }
+th, td { align = "center"; padding: 5px 2px 5px 5px; }
+th { color: #fff; font-weight: bold; background-color: #0084ff; }
+table td.label { width: 20%; white-space: nowrap; min-width: 20px; background-color: #dee8f4; }
+</style>
+</head>
+<body>
+<div id="main_wrapper">
+<div id="content">
+<h1>Hierarchy Module Resource</h1>
+<table>
+<tr>
+<th class="label">MODULE NAME</th>
+<th class="label">REG NUMBER</th>
+<th class="label">ALU NUMBER</th>
+<th class="label">LUT NUMBER</th>
+<th class="label">DSP NUMBER</th>
+<th class="label">BSRAM NUMBER</th>
+<th class="label">SSRAM NUMBER</th>
+<th class="label">ROM16 NUMBER</th>
+</tr>
+<tr>
+<td class="label">tang20k_scr1 (J:/FPGA/tst/scr1test/scr1test/src/tang20k_scr1.sv)</td>
+<td align = "center">7</td>
+<td align = "center">-</td>
+<td align = "center">7</td>
+<td align = "center">-</td>
+<td align = "center">-</td>
+<td align = "center">-</td>
+<td align = "center">-</td>
+</tr>
+<td class="label">&nbsp&nbsp&nbsp&nbsp|--i_scr1
+ (J:/FPGA/tst/scr1test/scr1test/src/tang20k_scr1.sv)</td>
+<td align = "center">-</td>
+<td align = "center">-</td>
+<td align = "center">-</td>
+<td align = "center">-</td>
+<td align = "center">-</td>
+<td align = "center">-</td>
+<td align = "center">-</td>
+</tr>
+<td class="label">&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp|--i_rstn_reset_sync
+ (J:/FPGA/tst/scr1test/scr1test/src/top/scr1_top_ahb.sv)</td>
+<td align = "center">2</td>
+<td align = "center">-</td>
+<td align = "center">-</td>
+<td align = "center">-</td>
+<td align = "center">-</td>
+<td align = "center">-</td>
+<td align = "center">-</td>
+</tr>
+<td class="label">&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp|--i_core_top
+ (J:/FPGA/tst/scr1test/scr1test/src/top/scr1_top_ahb.sv)</td>
+<td align = "center">-</td>
+<td align = "center">-</td>
+<td align = "center">-</td>
+<td align = "center">-</td>
+<td align = "center">-</td>
+<td align = "center">-</td>
+<td align = "center">-</td>
+</tr>
+<td class="label">&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp|--i_core_rstn_qlfy_adapter_cell_sync
+ (J:/FPGA/tst/scr1test/scr1test/src/core/scr1_core_top.sv)</td>
+<td align = "center">1</td>
+<td align = "center">-</td>
+<td align = "center">1</td>
+<td align = "center">-</td>
+<td align = "center">-</td>
+<td align = "center">-</td>
+<td align = "center">-</td>
+</tr>
+<td class="label">&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp|--i_reset_output_buf
+ (J:/FPGA/tst/scr1test/scr1test/src/core/primitives/scr1_reset_cells.sv)</td>
+<td align = "center">1</td>
+<td align = "center">-</td>
+<td align = "center">-</td>
+<td align = "center">-</td>
+<td align = "center">-</td>
+<td align = "center">-</td>
+<td align = "center">-</td>
+</tr>
+<td class="label">&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp|--i_pipe_top
+ (J:/FPGA/tst/scr1test/scr1test/src/core/scr1_core_top.sv)</td>
+<td align = "center">-</td>
+<td align = "center">-</td>
+<td align = "center">-</td>
+<td align = "center">-</td>
+<td align = "center">-</td>
+<td align = "center">-</td>
+<td align = "center">-</td>
+</tr>
+<td class="label">&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp|--i_pipe_ifu
+ (J:/FPGA/tst/scr1test/scr1test/src/core/pipeline/scr1_pipe_top.sv)</td>
+<td align = "center">105</td>
+<td align = "center">15</td>
+<td align = "center">436</td>
+<td align = "center">-</td>
+<td align = "center">-</td>
+<td align = "center">-</td>
+<td align = "center">-</td>
+</tr>
+<td class="label">&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp|--i_pipe_idu
+ (J:/FPGA/tst/scr1test/scr1test/src/core/pipeline/scr1_pipe_top.sv)</td>
+<td align = "center">-</td>
+<td align = "center">-</td>
+<td align = "center">310</td>
+<td align = "center">-</td>
+<td align = "center">-</td>
+<td align = "center">-</td>
+<td align = "center">-</td>
+</tr>
+<td class="label">&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp|--i_pipe_exu
+ (J:/FPGA/tst/scr1test/scr1test/src/core/pipeline/scr1_pipe_top.sv)</td>
+<td align = "center">36</td>
+<td align = "center">31</td>
+<td align = "center">807</td>
+<td align = "center">-</td>
+<td align = "center">-</td>
+<td align = "center">-</td>
+<td align = "center">-</td>
+</tr>
+<td class="label">&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp|--i_ialu
+ (J:/FPGA/tst/scr1test/scr1test/src/core/pipeline/scr1_pipe_exu.sv)</td>
+<td align = "center">-</td>
+<td align = "center">64</td>
+<td align = "center">114</td>
+<td align = "center">-</td>
+<td align = "center">-</td>
+<td align = "center">-</td>
+<td align = "center">-</td>
+</tr>
+<td class="label">&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp|--i_lsu
+ (J:/FPGA/tst/scr1test/scr1test/src/core/pipeline/scr1_pipe_exu.sv)</td>
+<td align = "center">5</td>
+<td align = "center">-</td>
+<td align = "center">24</td>
+<td align = "center">-</td>
+<td align = "center">-</td>
+<td align = "center">-</td>
+<td align = "center">-</td>
+</tr>
+<td class="label">&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp|--i_pipe_mprf
+ (J:/FPGA/tst/scr1test/scr1test/src/core/pipeline/scr1_pipe_top.sv)</td>
+<td align = "center">-</td>
+<td align = "center">-</td>
+<td align = "center">119</td>
+<td align = "center">-</td>
+<td align = "center">-</td>
+<td align = "center">16</td>
+<td align = "center">-</td>
+</tr>
+<td class="label">&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp|--i_pipe_csr
+ (J:/FPGA/tst/scr1test/scr1test/src/core/pipeline/scr1_pipe_top.sv)</td>
+<td align = "center">3</td>
+<td align = "center">-</td>
+<td align = "center">83</td>
+<td align = "center">-</td>
+<td align = "center">-</td>
+<td align = "center">-</td>
+<td align = "center">-</td>
+</tr>
+<td class="label">&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp|--i_tcm
+ (J:/FPGA/tst/scr1test/scr1test/src/top/scr1_top_ahb.sv)</td>
+<td align = "center">4</td>
+<td align = "center">-</td>
+<td align = "center">1</td>
+<td align = "center">-</td>
+<td align = "center">-</td>
+<td align = "center">-</td>
+<td align = "center">-</td>
+</tr>
+<td class="label">&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp|--i_dp_memory
+ (J:/FPGA/tst/scr1test/scr1test/src/top/scr1_tcm.sv)</td>
+<td align = "center">29</td>
+<td align = "center">-</td>
+<td align = "center">39</td>
+<td align = "center">-</td>
+<td align = "center">-</td>
+<td align = "center">-</td>
+<td align = "center">-</td>
+</tr>
+<td class="label">&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp|--i_timer
+ (J:/FPGA/tst/scr1test/scr1test/src/top/scr1_top_ahb.sv)</td>
+<td align = "center">184</td>
+<td align = "center">-</td>
+<td align = "center">337</td>
+<td align = "center">-</td>
+<td align = "center">-</td>
+<td align = "center">-</td>
+<td align = "center">-</td>
+</tr>
+<td class="label">&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp|--i_imem_router
+ (J:/FPGA/tst/scr1test/scr1test/src/top/scr1_top_ahb.sv)</td>
+<td align = "center">2</td>
+<td align = "center">-</td>
+<td align = "center">28</td>
+<td align = "center">-</td>
+<td align = "center">-</td>
+<td align = "center">-</td>
+<td align = "center">-</td>
+</tr>
+<td class="label">&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp|--i_dmem_router
+ (J:/FPGA/tst/scr1test/scr1test/src/top/scr1_top_ahb.sv)</td>
+<td align = "center">3</td>
+<td align = "center">-</td>
+<td align = "center">16</td>
+<td align = "center">-</td>
+<td align = "center">-</td>
+<td align = "center">-</td>
+<td align = "center">-</td>
+</tr>
+<td class="label">&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp|--i_imem_ahb
+ (J:/FPGA/tst/scr1test/scr1test/src/top/scr1_top_ahb.sv)</td>
+<td align = "center">1</td>
+<td align = "center">-</td>
+<td align = "center">-</td>
+<td align = "center">-</td>
+<td align = "center">-</td>
+<td align = "center">-</td>
+<td align = "center">-</td>
+</tr>
+<td class="label">&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp|--i_dmem_ahb
+ (J:/FPGA/tst/scr1test/scr1test/src/top/scr1_top_ahb.sv)</td>
+<td align = "center">54</td>
+<td align = "center">-</td>
+<td align = "center">36</td>
+<td align = "center">-</td>
+<td align = "center">-</td>
+<td align = "center">-</td>
+<td align = "center">-</td>
+</tr>
+<td class="label">&nbsp&nbsp&nbsp&nbsp|--i_uart
+ (J:/FPGA/tst/scr1test/scr1test/src/tang20k_scr1.sv)</td>
+<td align = "center">13</td>
+<td align = "center">-</td>
+<td align = "center">19</td>
+<td align = "center">-</td>
+<td align = "center">-</td>
+<td align = "center">-</td>
+<td align = "center">-</td>
+</tr>
+<td class="label">&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp|--regs
+ (J:/FPGA/tst/scr1test/scr1test/src/ahb_lite_uart16550/src/ahb_lite_uart16550.v)</td>
+<td align = "center">95</td>
+<td align = "center">-</td>
+<td align = "center">174</td>
+<td align = "center">-</td>
+<td align = "center">-</td>
+<td align = "center">-</td>
+<td align = "center">-</td>
+</tr>
+<td class="label">&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp|--transmitter
+ (J:/FPGA/tst/scr1test/scr1test/src/ahb_lite_uart16550/src/uart16550/uart_regs.v)</td>
+<td align = "center">22</td>
+<td align = "center">-</td>
+<td align = "center">51</td>
+<td align = "center">-</td>
+<td align = "center">-</td>
+<td align = "center">-</td>
+<td align = "center">-</td>
+</tr>
+<td class="label">&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp|--fifo_tx
+ (J:/FPGA/tst/scr1test/scr1test/src/ahb_lite_uart16550/src/uart16550/uart_transmitter.v)</td>
+<td align = "center">13</td>
+<td align = "center">4</td>
+<td align = "center">20</td>
+<td align = "center">-</td>
+<td align = "center">-</td>
+<td align = "center">-</td>
+<td align = "center">-</td>
+</tr>
+<td class="label">&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp|--tfifo
+ (J:/FPGA/tst/scr1test/scr1test/src/ahb_lite_uart16550/src/uart16550/uart_tfifo.v)</td>
+<td align = "center">-</td>
+<td align = "center">-</td>
+<td align = "center">-</td>
+<td align = "center">-</td>
+<td align = "center">-</td>
+<td align = "center">2</td>
+<td align = "center">-</td>
+</tr>
+<td class="label">&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp|--i_uart_sync_flops
+ (J:/FPGA/tst/scr1test/scr1test/src/ahb_lite_uart16550/src/uart16550/uart_regs.v)</td>
+<td align = "center">2</td>
+<td align = "center">-</td>
+<td align = "center">-</td>
+<td align = "center">-</td>
+<td align = "center">-</td>
+<td align = "center">-</td>
+<td align = "center">-</td>
+</tr>
+<td class="label">&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp|--receiver
+ (J:/FPGA/tst/scr1test/scr1test/src/ahb_lite_uart16550/src/uart16550/uart_regs.v)</td>
+<td align = "center">54</td>
+<td align = "center">-</td>
+<td align = "center">127</td>
+<td align = "center">-</td>
+<td align = "center">-</td>
+<td align = "center">-</td>
+<td align = "center">-</td>
+</tr>
+<td class="label">&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp|--fifo_rx
+ (J:/FPGA/tst/scr1test/scr1test/src/ahb_lite_uart16550/src/uart16550/uart_receiver.v)</td>
+<td align = "center">62</td>
+<td align = "center">4</td>
+<td align = "center">94</td>
+<td align = "center">-</td>
+<td align = "center">-</td>
+<td align = "center">-</td>
+<td align = "center">-</td>
+</tr>
+<td class="label">&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp|--rfifo
+ (J:/FPGA/tst/scr1test/scr1test/src/ahb_lite_uart16550/src/uart16550/uart_rfifo.v)</td>
+<td align = "center">-</td>
+<td align = "center">-</td>
+<td align = "center">-</td>
+<td align = "center">-</td>
+<td align = "center">-</td>
+<td align = "center">2</td>
+<td align = "center">-</td>
+</tr>
+</table>
+</div><!-- content -->
+</div><!-- main_wrapper -->
+</body>
+</html>
