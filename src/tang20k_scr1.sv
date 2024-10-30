@@ -259,12 +259,78 @@ assign scr1_irq = uart_irq;
 
 logic hsel;
 assign hsel = (ahb_dmem_haddr[31:8] == 24'b0);
+logic hesel_rom;
+
+
+
+//     Gowin_pROM ahb_rom(
+//         .dout(ahb_imem_hrdata), //output [31:0] dout
+//         .clk(cpu_clk), //input clk
+//         .oce(1'b1), //input oce
+//         .ce(1'b1), //input ce
+//         .reset(soc_rst_n), //input reset
+//         .ad(ahb_imem_haddr[$clog2(8192):2]) //input [12:0] ad
+//     );
+
+// (* ramstyle = "M9K" *) logic [3:0][7:0] memory_array[8192:0];
+(* ram_style = "block" *)  logic  [3:0][7:0]  ram_block_1  [8192:0];
+logic hesel_rom =  (ahb_imem_haddr[31:13] == 19'b0);
+wire rom_need_action = (ahb_imem_htrans & hesel_rom) != 0;
+logic hesel_rom =  (ahb_imem_haddr[31:13] == 19'b0);
+logic [12:0] haddr;
+typedef enum logic [1 : 0] {init, idle, addr, read_data} statetype;
+statetype state, nextstate;
+logic hready;
+statetype state, nextstate;
+
+always_ff @(posedge cpu_clk) begin
+    case(state) 
+        init        :   begin 
+                            ram_block_1[0] <= 32'h01402603;
+                            ram_block_1[1] <= 32'h00167613;
+                            ram_block_1[2] <= 32'hfe060ce3;
+                            ram_block_1[3] <= 32'h00000603;
+                            ram_block_1[4] <= 32'h00c02023;
+                            ram_block_1[5] <= 32'hfedff06f;
+                            end
+        idle        :   ;
+        addr        :   haddr <= ahb_imem_haddr[$clog2(8192)-1:2];
+        read_data   :   begin 
+                            ahb_imem_hrdata <= ram_block_1[haddr];
+                            ahb_imem_hready <= 1;
+                            end
+    endcase
+end
+// states register 
+always_ff @(posedge cpu_clk)begin 
+    if(~soc_rst_n) begin 
+        state <= init;
+    end
+    else begin 
+        state <= nextstate;
+    end
+end
+// state transition logic
+always_comb begin 
+    case(state)
+        default     :   nextstate = idle;
+        idle        :   nextstate = rom_need_action ? addr : idle;
+        addr        :   nextstate = read_data;
+        read_data   :   nextstate = ahb_imem_hready ? idle : read_data;
+    endcase
+end
+
+// always_ff @(posedge cpu_clk) begin 
+//     if (ahb_dmem_haddr[31:8] == 24'd99) begin 
+//         LED3 <= 0;
+//     end
+//     // else LED3 <= 1;
+// end
 
 always_ff @(posedge cpu_clk) begin 
-    if (ahb_dmem_haddr[31:8] == 24'd99) begin 
-        LED3 <= 0;
+    if(hesel_rom) begin 
+        LED5 <= 0;
     end
-    // else LED3 <= 1;
 end
 
 ahb_lite_uart16550
@@ -296,6 +362,9 @@ i_uart(
 
     .UART_INT (uart_irq)
 );
+
+
+
 
 // always_ff @(posedge clock)
 

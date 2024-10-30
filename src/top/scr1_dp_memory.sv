@@ -34,7 +34,7 @@ module scr1_dp_memory
 //-------------------------------------------------------------------------------
 // Local signal declaration
 //-------------------------------------------------------------------------------
- `ifdef SCR1_TRGT_FPGA_INTEL_MAX10
+ `ifdef SCR1_TRGT_FPGA_INTEL_MAX10        //32                                      //16384
 (* ramstyle = "M9K" *)    logic [SCR1_NBYTES-1:0][7:0]  memory_array  [0:(SCR1_SIZE/SCR1_NBYTES)-1];
  `elsif SCR1_TRGT_FPGA_INTEL_ARRIAV
 (* ramstyle = "M10K" *)   logic [SCR1_NBYTES-1:0][7:0]  memory_array  [0:(SCR1_SIZE/SCR1_NBYTES)-1];
@@ -86,25 +86,41 @@ logic [3:0] wenbb;
 //-------------------------------------------------------------------------------
 assign wenbb = {4{wenb}} & webb;
 always_ff @(posedge clk) begin
+    // if (~rst) begin  
+    //     ram_block_1[0] <= 32'h01402603;
+    //     ram_block_1[1] <= 32'h00167613;
+    //     ram_block_1[2] <= 32'hfe060ce3;
+    //     ram_block_1[3] <= 32'h00000603;
+    //     ram_block_1[4] <= 32'h00c02023;
+    //     ram_block_1[5] <= 32'hfedff06f;
+
+    //     ram_block_2[0] <= 32'h01402603;
+    //     ram_block_2[1] <= 32'h00167613;
+    //     ram_block_2[2] <= 32'hfe060ce3;
+    //     ram_block_2[3] <= 32'h00000603;
+    //     ram_block_2[4] <= 32'h00c02023;
+    //     ram_block_1[5] <= 32'hfedff06f;
+    // end
     if (wenb) begin
         if (wenbb[0]) begin
-            ram_block_1[addrb][3] <= datab[0+:8];
-            ram_block_2[addrb][3] <= datab[0+:8];
-
+            ram_block_1[addrb][0] <= datab[0+:8];
+            ram_block_2[addrb][0] <= datab[0+:8];
+            dbg_sig <= 0;
         end
         if (wenbb[1]) begin
-            ram_block_1[addrb][2] <= datab[8+:8];
-            ram_block_2[addrb][2] <= datab[8+:8];
-
+            ram_block_1[addrb][1] <= datab[8+:8];
+            ram_block_2[addrb][1] <= datab[8+:8];
+            dbg_sig <= 0;
         end
         if (wenbb[2]) begin
-            ram_block_1[addrb][1] <= datab[16+:8];
-            ram_block_2[addrb][1] <= datab[16+:8];
-
+            ram_block_1[addrb][2] <= datab[16+:8];
+            ram_block_2[addrb][2] <= datab[16+:8];
+            dbg_sig <= 0;
         end
         if (wenbb[3]) begin
-            ram_block_1[addrb][0] <= datab[24+:8];
-            ram_block_2[addrb][0] <= datab[24+:8];
+            ram_block_1[addrb][3] <= datab[24+:8];
+            ram_block_2[addrb][3] <= datab[24+:8];
+            dbg_sig <= 0;
         end
     end
     if(renb) begin
