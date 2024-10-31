@@ -102,25 +102,30 @@ always_ff @(posedge clk) begin
     //     ram_block_1[5] <= 32'hfedff06f;
     // end
     if (wenb) begin
+        if (datab ==32'hfedff06f)
+            dbg_sig <= 0;
+
         if (wenbb[0]) begin
             ram_block_1[addrb][0] <= datab[0+:8];
             ram_block_2[addrb][0] <= datab[0+:8];
-            dbg_sig <= 0;
+            // if(datab[8:0] == 8'b00000001)
+                // dbg_sig <= 0;
+            // else db
         end
         if (wenbb[1]) begin
             ram_block_1[addrb][1] <= datab[8+:8];
             ram_block_2[addrb][1] <= datab[8+:8];
-            dbg_sig <= 0;
+            // dbg_sig <= 0;
         end
         if (wenbb[2]) begin
             ram_block_1[addrb][2] <= datab[16+:8];
             ram_block_2[addrb][2] <= datab[16+:8];
-            dbg_sig <= 0;
+            // dbg_sig <= 0;
         end
         if (wenbb[3]) begin
             ram_block_1[addrb][3] <= datab[24+:8];
             ram_block_2[addrb][3] <= datab[24+:8];
-            dbg_sig <= 0;
+            // dbg_sig <= 0;
         end
     end
     if(renb) begin

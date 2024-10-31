@@ -20,8 +20,8 @@ module tang20k_scr1 (
     // === RESET ===========================================
     input  logic                    RESETn,
     // === LEDs ============================================
-//    output logic                    LED0,
-//    output logic                    LED1,
+    output logic                    LED0,
+    output logic                    LED1,
     output logic                    LED2,
     output logic                    LED3,
     output logic                    LED4,
@@ -249,40 +249,37 @@ i_scr1 (
         .dbg_tcm                    (dbg_tcm                )
 );
 
-assign LED4 = dbg_tcm;
-
 `ifdef SCR1_IPIC_EN
 assign scr1_irq = {31'd0, uart_irq};
 `else
 assign scr1_irq = uart_irq;
 `endif // SCR1_IPIC_EN
 
-logic hsel;
-assign hsel = (ahb_dmem_haddr[31:8] == 24'b0);
-logic hesel_rom;
+logic hsel_uart;
+logic hsel_rom;
+always_ff @(posedge cpu_clk) begin 
+    if(~soc_rst_n)begin
+        hsel_rom <= 0;
+        hsel_uart <= 0;
+    end
+    else begin 
+        hsel_uart <= (ahb_dmem_haddr[31:8] == 24'b0);
+        hsel_rom <= (ahb_imem_haddr[31:15] == 17'b11111111111111111);
+    end
+end
+
+(* ram_style = "block" *)  logic  [3:0][7:0]  ram_block_1  [8191:0];
 
 
 
-//     Gowin_pROM ahb_rom(
-//         .dout(ahb_imem_hrdata), //output [31:0] dout
-//         .clk(cpu_clk), //input clk
-//         .oce(1'b1), //input oce
-//         .ce(1'b1), //input ce
-//         .reset(soc_rst_n), //input reset
-//         .ad(ahb_imem_haddr[$clog2(8192):2]) //input [12:0] ad
-//     );
+wire rom_need_action = ahb_imem_htrans != (2'b00 & hsel_rom);
 
-// (* ramstyle = "M9K" *) logic [3:0][7:0] memory_array[8192:0];
-(* ram_style = "block" *)  logic  [3:0][7:0]  ram_block_1  [8192:0];
-logic hesel_rom =  (ahb_imem_haddr[31:13] == 19'b0);
-wire rom_need_action = (ahb_imem_htrans & hesel_rom) != 0;
-logic hesel_rom =  (ahb_imem_haddr[31:13] == 19'b0);
 logic [12:0] haddr;
-typedef enum logic [1 : 0] {init, idle, addr, read_data} statetype;
+typedef enum logic [1 : 0] {init, idle, read_data} statetype;
 statetype state, nextstate;
-logic hready;
+// logic hready;
 statetype state, nextstate;
-
+assign ahb_imem_hready = (state == idle);
 always_ff @(posedge cpu_clk) begin
     case(state) 
         init        :   begin 
@@ -293,11 +290,14 @@ always_ff @(posedge cpu_clk) begin
                             ram_block_1[4] <= 32'h00c02023;
                             ram_block_1[5] <= 32'hfedff06f;
                             end
-        idle        :   ;
-        addr        :   haddr <= ahb_imem_haddr[$clog2(8192)-1:2];
+        idle        :   begin 
+                            if(hsel_rom)
+                                 haddr <= ahb_imem_haddr[$clog2(8192)+1:2];
+                            end
         read_data   :   begin 
+                            if(haddr[12:2] == 11'b00000000000)
+                                LED1 <=0;
                             ahb_imem_hrdata <= ram_block_1[haddr];
-                            ahb_imem_hready <= 1;
                             end
     endcase
 end
@@ -314,22 +314,22 @@ end
 always_comb begin 
     case(state)
         default     :   nextstate = idle;
-        idle        :   nextstate = rom_need_action ? addr : idle;
-        addr        :   nextstate = read_data;
-        read_data   :   nextstate = ahb_imem_hready ? idle : read_data;
+        init        :   nextstate = idle;
+        idle        :   nextstate = ~rom_need_action ? idle : read_data;
     endcase
 end
 
-// always_ff @(posedge cpu_clk) begin 
-//     if (ahb_dmem_haddr[31:8] == 24'd99) begin 
-//         LED3 <= 0;
-//     end
-//     // else LED3 <= 1;
-// end
 
 always_ff @(posedge cpu_clk) begin 
-    if(hesel_rom) begin 
+    if(hsel_rom) begin 
         LED5 <= 0;
+    end
+    if(hsel_uart) begin 
+        LED4 <= 0;
+    end
+    else begin 
+        LED5 <= 1;
+        LED4 <= 1;
     end
 end
 
@@ -341,7 +341,7 @@ i_uart(
     .HBURST (ahb_dmem_hburst),
     .HMASTLOCK (1'b1),
     .HPROT (ahb_dmem_hprot),
-    .HSEL (hsel),
+    .HSEL (hsel_uart),
     .HSIZE (ahb_dmem_hsize),
     .HTRANS (ahb_dmem_htrans),
     .HWDATA (ahb_dmem_hwdata),
