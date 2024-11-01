@@ -35,7 +35,6 @@
         <File path="src/core/scr1_tapc.sv" type="file.verilog" enable="1"/>
         <File path="src/core/scr1_tapc_shift_reg.sv" type="file.verilog" enable="1"/>
         <File path="src/core/scr1_tapc_synchronizer.sv" type="file.verilog" enable="1"/>
-        <File path="src/gowin_prom/gowin_prom.v" type="file.verilog" enable="1"/>
         <File path="src/tang20k_scr1.sv" type="file.verilog" enable="1"/>
         <File path="src/top/scr1_dmem_ahb.sv" type="file.verilog" enable="1"/>
         <File path="src/top/scr1_dmem_router.sv" type="file.verilog" enable="1"/>
