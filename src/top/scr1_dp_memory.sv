@@ -75,8 +75,8 @@ localparam int unsigned RAM_SIZE_WORDS = SCR1_SIZE/SCR1_NBYTES;
 //-------------------------------------------------------------------------------
 // Local signal declaration
 //-------------------------------------------------------------------------------
-(* ram_style = "block" *)  logic  [SCR1_NBYTES-1:0][7:0]  ram_block_1  [(RAM_SIZE_WORDS-1)/2:0];
-(* ram_style = "block" *)  logic  [SCR1_NBYTES-1:0][7:0]  ram_block_2  [(RAM_SIZE_WORDS-1)/2:0];
+(* ram_style = "block" *)  logic  [SCR1_NBYTES-1:0][7:0]  ram_block_1  [(RAM_SIZE_WORDS-1):0];
+(* ram_style = "block" *)  logic  [SCR1_NBYTES-1:0][7:0]  ram_block_2  [(RAM_SIZE_WORDS-1):0];
 
 
 

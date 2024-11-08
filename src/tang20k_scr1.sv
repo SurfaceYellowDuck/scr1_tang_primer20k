@@ -264,57 +264,58 @@ always_ff @(posedge cpu_clk) begin
     end
     else begin 
         hsel_uart <= (ahb_dmem_haddr[31:8] == 24'b0);
-        hsel_rom <= (ahb_imem_haddr[31:15] == 17'b11111111111111111);
+        hsel_rom <= (ahb_imem_haddr[31:16] == 16'b1111111111101111);
     end
 end
 
-(* ram_style = "block" *)  logic  [3:0][7:0]  ram_block_1  [8191:0];
+(* ram_style = "block" *)  logic [32:0]  ram_block_3  [16383:0];
 
 
 
 wire rom_need_action = ahb_imem_htrans != (2'b00 & hsel_rom);
 
 logic [12:0] haddr;
-typedef enum logic [1 : 0] {init, idle, read_data} statetype;
-statetype state, nextstate;
+typedef enum bit {idle, read_data} statetype;
+
+// typedef enum bit
+// {
+//     idle = 2'b0,
+//     read_data = 2'b1
+// }
+// statetype;
+// statetype state, next_state;
+
+// statetype state, nextstate;
 // logic hready;
 statetype state, nextstate;
 assign ahb_imem_hready = (state == idle);
 always_ff @(posedge cpu_clk) begin
     case(state) 
-        init        :   begin 
-                            ram_block_1[0] <= 32'h01402603;
-                            ram_block_1[1] <= 32'h00167613;
-                            ram_block_1[2] <= 32'hfe060ce3;
-                            ram_block_1[3] <= 32'h00000603;
-                            ram_block_1[4] <= 32'h00c02023;
-                            ram_block_1[5] <= 32'hfedff06f;
-                            end
         idle        :   begin 
                             if(hsel_rom)
-                                 haddr <= ahb_imem_haddr[$clog2(8192)+1:2];
+                                 haddr <= ahb_imem_haddr[$clog2(16384)+1:2];
                             end
         read_data   :   begin 
-                            if(haddr[12:2] == 11'b00000000000)
-                                LED1 <=0;
-                            ahb_imem_hrdata <= ram_block_1[haddr];
+                            // if(haddr[12:2] == 11'b00000000000)
+                            //     LED1 <=0;
+                            ahb_imem_hrdata <= ram_block_3[haddr];
                             end
     endcase
 end
 // states register 
 always_ff @(posedge cpu_clk)begin 
-    if(~soc_rst_n) begin 
-        state <= init;
-    end
-    else begin 
-        state <= nextstate;
-    end
+    // if(~soc_rst_n) begin 
+    //     state <= init;
+    // end
+    // else begin 
+    state <= nextstate;
+    // end
 end
 // state transition logic
 always_comb begin 
     case(state)
         default     :   nextstate = idle;
-        init        :   nextstate = idle;
+        // init        :   nextstate = idle;
         idle        :   nextstate = ~rom_need_action ? idle : read_data;
     endcase
 end
@@ -363,7 +364,9 @@ i_uart(
     .UART_INT (uart_irq)
 );
 
-
+initial begin
+    $readmemh("test.hex", ram_block_3);
+end
 
 
 // always_ff @(posedge clock)
