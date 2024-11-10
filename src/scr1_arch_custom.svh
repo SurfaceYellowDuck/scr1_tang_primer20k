@@ -23,16 +23,16 @@
 // Uncomment to select recommended core architecture configurations
 // Default SCR1 FPGA SDK created for RV32IMC_MAX config
 
-//`define SCR1_CFG_RV32IMC_MAX
+`define SCR1_CFG_RV32IMC_MAX
 //`define SCR1_CFG_RV32IC_BASE
-`define SCR1_CFG_RV32EC_MIN
+// `define SCR1_CFG_RV32EC_MIN
 
 
 
 parameter bit [`SCR1_XLEN-1:0]          SCR1_ARCH_RST_VECTOR        = 'hFFEF0000;   // Reset vector
 parameter bit [`SCR1_XLEN-1:0]          SCR1_ARCH_MTVEC_BASE        = 'hFFEF0000;   // MTVEC BASE field reset value
 
-parameter bit [`SCR1_DMEM_AWIDTH-1:0]   SCR1_TCM_ADDR_MASK          = 'hFFFFFF00;   // TCM mask and size
+parameter bit [`SCR1_DMEM_AWIDTH-1:0]   SCR1_TCM_ADDR_MASK          = 'hFFFFF000;   // TCM mask and size
 parameter bit [`SCR1_DMEM_AWIDTH-1:0]   SCR1_TCM_ADDR_PATTERN       = 'hF0000000;   // TCM address match pattern
 
 parameter bit [`SCR1_DMEM_AWIDTH-1:0]   SCR1_TIMER_ADDR_MASK        = 'hFFFFFFE0;   // Timer mask (should be 0xFFFFFFE0)

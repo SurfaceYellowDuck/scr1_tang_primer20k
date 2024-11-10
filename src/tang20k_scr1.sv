@@ -268,13 +268,13 @@ always_ff @(posedge cpu_clk) begin
     end
 end
 
-(* ram_style = "block" *)  logic [32:0]  ram_block_3  [16383:0];
 
+(* ram_style = "block" *)  logic  [32-1:0]  ram_block_3  [16383:0] /* synthesis syn_ramstyle = "block_ram" */;
 
 
 wire rom_need_action = ahb_imem_htrans != (2'b00 & hsel_rom);
 
-logic [12:0] haddr;
+logic [13:0] haddr;
 typedef enum bit {idle, read_data} statetype;
 
 // typedef enum bit

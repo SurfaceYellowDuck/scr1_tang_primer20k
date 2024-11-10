@@ -35,7 +35,7 @@
 
 `ifdef SCR1_IPIC_EN
 
-`include "scr1_ipic.svh"
+`include "../../includes/scr1_ipic.svh"
 
 module scr1_ipic
 (

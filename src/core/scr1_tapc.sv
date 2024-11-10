@@ -26,8 +26,8 @@
 `include "../includes/scr1_arch_description.svh"
 
 `ifdef SCR1_DBG_EN
-`include "scr1_tapc.svh"
-`include "scr1_dm.svh"
+`include "../includes/scr1_tapc.svh"
+`include "../includes/scr1_dm.svh"
 
 module scr1_tapc (
     // JTAG signals

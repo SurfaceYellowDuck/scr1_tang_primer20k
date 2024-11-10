@@ -31,8 +31,8 @@
 `include "../../includes/scr1_arch_description.svh"
 
 `ifdef SCR1_TDU_EN
-`include "scr1_riscv_isa_decoding.svh"
-`include "scr1_tdu.svh"
+`include "../../includes/scr1_riscv_isa_decoding.svh"
+`include "../../includes/scr1_tdu.svh"
 
 module scr1_pipe_tdu (
     // Common signals

@@ -35,13 +35,13 @@
 `include "../../includes/scr1_arch_types.svh"
 `include "../../includes/scr1_riscv_isa_decoding.svh"
 `ifdef SCR1_IPIC_EN
-`include "scr1_ipic.svh"
+`include "../../includes/scr1_ipic.svh"
 `endif // SCR1_IPIC_EN
 `ifdef SCR1_DBG_EN
-`include "scr1_hdu.svh"
+`include "../../includes/scr1_hdu.svh"
 `endif // SCR1_DBG_EN
 `ifdef SCR1_TDU_EN
-`include "scr1_tdu.svh"
+`include "../../includes/scr1_tdu.svh"
 `endif // SCR1_TDU_EN
 
 module scr1_pipe_csr (

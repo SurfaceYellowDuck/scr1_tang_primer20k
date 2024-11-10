@@ -31,9 +31,9 @@
 `include "../../includes/scr1_arch_description.svh"
 
 `ifdef SCR1_DBG_EN
-`include "scr1_arch_types.svh"
-`include "scr1_riscv_isa_decoding.svh"
-`include "scr1_hdu.svh"
+`include "../../includes/scr1_arch_types.svh"
+`include "../../includes/scr1_riscv_isa_decoding.svh"
+`include "../../includes/scr1_hdu.svh"
 
 module scr1_pipe_hdu #(parameter HART_PBUF_INSTR_REGOUT_EN = 1'b1) (
     // Common signals

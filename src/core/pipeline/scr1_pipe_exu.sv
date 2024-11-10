@@ -44,11 +44,11 @@
 `include "../../includes/scr1_csr.svh"
 
 `ifdef SCR1_DBG_EN
- `include "scr1_hdu.svh"
+ `include "../../includes/scr1_hdu.svh"
 `endif // SCR1_DBG_EN
 
 `ifdef SCR1_TDU_EN
- `include "scr1_tdu.svh"
+ `include "../../includes/scr1_tdu.svh"
 `endif // SCR1_TDU_EN
 
 module scr1_pipe_exu (

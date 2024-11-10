@@ -7,7 +7,7 @@
 `include "../includes/scr1_memif.svh"
 `include "../includes/scr1_ahb.svh"
 `ifdef SCR1_IPIC_EN
-`include "scr1_ipic.svh"
+`include "../includes/scr1_ipic.svh"
 `endif // SCR1_IPIC_EN
 
 `ifdef SCR1_TCM_EN

@@ -47,26 +47,36 @@ assign wenbb = {4{wenb}} & webb;
 always_ff @(posedge clk) begin
     if (wenb) begin
         if (wenbb[0]) begin
-            memory_array[addrb][0] <= datab[0+:8];
+            ram_block_1[addrb][0+:8] <= datab[0+:8];
+            ram_block_2[addrb][0+:8] <= datab[0+:8];
         end
         if (wenbb[1]) begin
-            memory_array[addrb][1] <= datab[8+:8];
+            ram_block_1[addrb][8+:8] <= datab[8+:8];
+            ram_block_2[addrb][8+:8] <= datab[8+:8];
         end
         if (wenbb[2]) begin
-            memory_array[addrb][2] <= datab[16+:8];
+            ram_block_1[addrb][16+:8] <= datab[16+:8];
+            ram_block_2[addrb][16+:8] <= datab[16+:8];
         end
         if (wenbb[3]) begin
-            memory_array[addrb][3] <= datab[24+:8];
+            ram_block_1[addrb][24+:8] <= datab[24+:8];
+            ram_block_2[addrb][24+:8] <= datab[24+:8];
         end
     end
-    qb <= memory_array[addrb];
+    if(renb) begin
+        qb <= ram_block_1[addrb];
+    end
+    if(rena) begin
+        qa <= ram_block_2[addra];
+    end
 end
+
 //-------------------------------------------------------------------------------
 // Port A memory behavioral description
 //-------------------------------------------------------------------------------
-always_ff @(posedge clk) begin
-    qa <= memory_array[addra];
-end
+// always_ff @(posedge clk) begin
+//     qa <= memory_array[addra];
+// end
 
 `elsif SCR1_TRGT_FPGA_GOWIN
 
@@ -75,8 +85,11 @@ localparam int unsigned RAM_SIZE_WORDS = SCR1_SIZE/SCR1_NBYTES;
 //-------------------------------------------------------------------------------
 // Local signal declaration
 //-------------------------------------------------------------------------------
-(* ram_style = "block" *)  logic  [SCR1_NBYTES-1:0][7:0]  ram_block_1  [(RAM_SIZE_WORDS-1):0];
-(* ram_style = "block" *)  logic  [SCR1_NBYTES-1:0][7:0]  ram_block_2  [(RAM_SIZE_WORDS-1):0];
+// (* ram_style = "block" *)  logic  [SCR1_NBYTES-1:0][7:0]  ram_block_1  [(RAM_SIZE_WORDS-1):0];
+// (* ram_style = "block" *)  logic  [SCR1_NBYTES-1:0][7:0]  ram_block_2  [(RAM_SIZE_WORDS-1):0];
+
+(* ram_style = "block" *)  logic  [SCR1_WIDTH-1:0]  ram_block_1  [(RAM_SIZE_WORDS-1):0] /* synthesis syn_ramstyle = "block_ram" */;
+(* ram_style = "block" *)  logic  [SCR1_WIDTH-1:0]  ram_block_2  [(RAM_SIZE_WORDS-1):0] /* synthesis syn_ramstyle = "block_ram" */;
 
 
 
@@ -102,34 +115,34 @@ always_ff @(posedge clk) begin
     //     ram_block_1[5] <= 32'hfedff06f;
     // end
     if (wenb) begin
-        if (datab ==32'hfedff06f)
-            dbg_sig <= 0;
+        // if (datab ==32'hfedff06f)
+        //     dbg_sig <= 0;
 
         if (wenbb[0]) begin
-            ram_block_1[addrb][0] <= datab[0+:8];
-            ram_block_2[addrb][0] <= datab[0+:8];
+            ram_block_1[addrb][0+:8] <= datab[0+:8];
+            ram_block_2[addrb][0+:8] <= datab[0+:8];
             // if(datab[8:0] == 8'b00000001)
                 // dbg_sig <= 0;
             // else db
         end
         if (wenbb[1]) begin
-            ram_block_1[addrb][1] <= datab[8+:8];
-            ram_block_2[addrb][1] <= datab[8+:8];
+            ram_block_1[addrb][8+:8] <= datab[8+:8];
+            ram_block_2[addrb][8+:8] <= datab[8+:8];
             // dbg_sig <= 0;
         end
         if (wenbb[2]) begin
-            ram_block_1[addrb][2] <= datab[16+:8];
-            ram_block_2[addrb][2] <= datab[16+:8];
+            ram_block_1[addrb][16+:8] <= datab[16+:8];
+            ram_block_2[addrb][16+:8] <= datab[16+:8];
             // dbg_sig <= 0;
         end
         if (wenbb[3]) begin
-            ram_block_1[addrb][3] <= datab[24+:8];
-            ram_block_2[addrb][3] <= datab[24+:8];
+            ram_block_1[addrb][24+:8] <= datab[24+:8];
+            ram_block_2[addrb][24+:8] <= datab[24+:8];
             // dbg_sig <= 0;
         end
     end
     if(renb) begin
-        qb <= ram_block_1[addrb];
+        qb <= ram_block_1[addra];
     end
 end
 //-------------------------------------------------------------------------------
