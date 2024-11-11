@@ -263,7 +263,7 @@ always_ff @(posedge cpu_clk) begin
         hsel_uart <= 0;
     end
     else begin 
-        hsel_uart <= (ahb_dmem_haddr[31:8] == 24'b0);
+        hsel_uart <= (ahb_dmem_haddr[31:16] == 16'b1111111111011111); //uart addr 0xffdf0000
         hsel_rom <= (ahb_imem_haddr[31:16] == 16'b1111111111101111);
     end
 end
