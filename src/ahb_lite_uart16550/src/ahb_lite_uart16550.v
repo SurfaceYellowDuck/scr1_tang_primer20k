@@ -8,7 +8,7 @@
  * these projects source code is placed in src/uart16550
  */
 
-`include "./uart16550/uart_defines.v"
+`include "uart_defines.v"
 
 module ahb_lite_uart16550(
     //ABB-Lite side

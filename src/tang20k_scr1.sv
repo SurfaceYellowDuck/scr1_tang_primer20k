@@ -257,6 +257,7 @@ assign scr1_irq = uart_irq;
 
 logic hsel_uart;
 logic hsel_rom;
+// logic [SCR1_AHB_WIDTH-1:0] uart_addr;
 always_ff @(posedge cpu_clk) begin 
     if(~soc_rst_n)begin
         hsel_rom <= 0;
@@ -264,6 +265,7 @@ always_ff @(posedge cpu_clk) begin
     end
     else begin 
         hsel_uart <= (ahb_dmem_haddr[31:16] == 16'b1111111111011111); //uart addr 0xffdf0000
+        // uart_addr <= {16'b0, ahb_dmem_haddr[15:0]};
         hsel_rom <= (ahb_imem_haddr[31:16] == 16'b1111111111101111);
     end
 end
@@ -365,7 +367,9 @@ i_uart(
 );
 
 initial begin
-    $readmemh("test.hex", ram_block_3);
+    // $dumpfile("out. vcd");
+    $readmemh("test_2.hex", ram_block_3);
+    // $dumpvars(0,my_testbench)
 end
 
 

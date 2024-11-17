@@ -23,9 +23,9 @@
 // Uncomment to select recommended core architecture configurations
 // Default SCR1 FPGA SDK created for RV32IMC_MAX config
 
-`define SCR1_CFG_RV32IMC_MAX
+// `define SCR1_CFG_RV32IMC_MAX
 //`define SCR1_CFG_RV32IC_BASE
-// `define SCR1_CFG_RV32EC_MIN
+`define SCR1_CFG_RV32EC_MIN
 
 
 
