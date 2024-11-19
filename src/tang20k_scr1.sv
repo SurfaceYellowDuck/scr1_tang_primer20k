@@ -309,15 +309,15 @@ end
 
 
 always_ff @(posedge cpu_clk) begin 
-    if(hsel_rom) begin 
-        LED5 <= 0;
-    end
-    if(hsel_uart) begin 
+    if(ahb_imem_haddr == 32'hffef0f08) begin 
         LED4 <= 0;
     end
+    if(ahb_imem_haddr == 32'hffef05f50) begin 
+        LED5 <= 0;
+    end
     else begin 
-        LED5 <= 1;
-        LED4 <= 1;
+        // LED5 <= 1;
+        // LED4 <= 1;
     end
 end
 
@@ -353,7 +353,7 @@ i_uart(
 
 initial begin
     // $dumpfile("out. vcd");
-    $readmemh("scbl3.hex", ram_block_3);
+    $readmemh("scbl7.hex", ram_block_3);
     // $dumpvars(0,my_testbench)
 end
 
