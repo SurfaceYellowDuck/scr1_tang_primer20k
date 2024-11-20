@@ -283,7 +283,7 @@ wire rom_need_action = (ahb_imem_htrans != 2'b00) && hsel_rom;
 
 // statetype state, nextstate;
 assign ahb_imem_hready = 1;
-assign ahb_dmem_hresp = 1'b0;
+assign ahb_imem_hresp = 1'b0; // ?? CONCURRENCY
 always_ff @(posedge cpu_clk) begin
         if(rom_need_action) begin
             ahb_imem_hrdata <= ram_block_3[ahb_imem_haddr[$clog2(16384)+1:2]];
