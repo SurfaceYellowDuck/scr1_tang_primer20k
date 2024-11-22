@@ -257,55 +257,30 @@ assign scr1_irq = uart_irq;
 
 logic hsel_uart;
 logic hsel_rom;
-// logic [SCR1_AHB_WIDTH-1:0] uart_addr;
 assign hsel_uart = ahb_dmem_haddr[31:16] == 16'b1111_1111_1101_1111;
 assign hsel_rom = ahb_imem_haddr[31:16] ==  16'b1111_1111_1110_1111;
-// always_ff @(posedge cpu_clk) begin 
-//     if(~soc_rst_n)begin
-//         hsel_rom <= 0;
-//         hsel_uart <= 0;
-//     end
-//     else begin 
-//         hsel_uart <= (ahb_dmem_haddr[31:16] == 16'b1111_1111_1101_1111); //uart addr 0xffdf0000
-//         // uart_addr <= {16'b0, ahb_dmem_haddr[15:0]};
-//         hsel_rom <= (ahb_imem_haddr[31:16] ==  16'b1111_1111_1110_1111);
-//     end
-// end
+
 
 
 (* ram_style = "block" *)  logic  [32-1:0]  ram_block_3  [16383:0] /* synthesis syn_ramstyle = "block_ram" */;
 
 
-wire rom_need_action = (ahb_imem_htrans != 2'b00) && hsel_rom;
+wire rom_imem_need_action = (ahb_imem_htrans != 2'b00) && hsel_rom;
+wire rom_dmem_need_action = (ahb_dmem_htrans != 2'b00) && hsel_rom;
 
-// logic [13:0] haddr;
-// typedef enum bit {idle, read_data} statetype;
-
-// statetype state, nextstate;
 assign ahb_imem_hready = 1;
-assign ahb_imem_hresp = 1'b0; // ?? CONCURRENCY
+assign ahb_imem_hresp = 1'b0; 
+assign ahb_dmem_hready = rom_dmem_need_action == 1; // ?? CONCURRENCY
+assign ahb_dmem_hresp = 1'b0; // ?? CONCURRENCY
+
 always_ff @(posedge cpu_clk) begin
-        if(rom_need_action) begin
+        if(rom_imem_need_action) begin
             ahb_imem_hrdata <= ram_block_3[ahb_imem_haddr[$clog2(16384)+1:2]];
         end
+        if(rom_dmem_need_action) begin 
+            ahb_dmem_hrdata <= ram_block_3[ahb_dmem_haddr[$clog2(16384)+1:2]];
+        end
 end
-// states register 
-// always_ff @(posedge cpu_clk)begin 
-    // if(~soc_rst_n) begin 
-    //     state <= init;
-    // end
-    // else begin 
-    // state <= nextstate;
-    // end
-// end
-// state transition logic
-// always_comb begin 
-    // case(state)
-        // default     :   nextstate = idle;
-        // init        :   nextstate = idle;
-        // idle        :   nextstate = ~rom_need_action ? idle : read_data;
-    // endcase
-// end
 
 
 always_ff @(posedge cpu_clk) begin 
@@ -352,9 +327,7 @@ i_uart(
 );
 
 initial begin
-    // $dumpfile("out. vcd");
-    $readmemh("scbl7.hex", ram_block_3);
-    // $dumpvars(0,my_testbench)
+    $readmemh("scbl.mem", ram_block_3);
 end
 
 
