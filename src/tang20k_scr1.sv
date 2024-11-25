@@ -294,6 +294,12 @@ logic [SCR1_AHB_WIDTH-1:0] uart_data;
 logic                      uart_hready;
 logic                      uart_hresp;
 
+logic                      dmem_ready;
+logic                      dmem_resp;
+
+assign hreadyout = {uart_hready, dmem_ready};
+assign hresp = {uart_hresp, dmem_resp};
+
 
 
 ahb_lite_uart16550
@@ -310,8 +316,8 @@ i_uart(
     .HWDATA (ahb_dmem_hwdata),
     .HWRITE (ahb_dmem_hwrite),
     .HRDATA (hrdata_0),
-    .HREADY (hreadyout),
-    .HRESP (hresp),
+    .HREADY (uart_hready),
+    .HRESP (uart_hresp),
     .SI_Endian (1'b1),
 
     .UART_SRX (UART_RX),
@@ -323,7 +329,9 @@ i_uart(
     .UART_RI  ('1),
     .UART_DCD ('1),
 
-    .UART_INT (uart_irq)
+    .UART_INT (uart_irq),
+    .DBG_LED (LED3)
+
 );
 
 
@@ -332,7 +340,6 @@ i_uart(
 assign hsel[0] = ahb_dmem_haddr[31:16] == 16'b1111_1111_1101_1111;  //uart
 assign hsel[1] = ahb_dmem_haddr[31:16] ==  16'b1111_1111_1110_1111; //rom
 assign imem_hsel = ahb_imem_haddr[31:16] ==  16'b1111_1111_1110_1111;
-
 // always_comb @(posedge cpu_clk) begin 
 //     if(soc_rst_n)begin 
 //         hsel[1:0] = 2'b0;
@@ -358,8 +365,8 @@ soc_rom_mem(
     .dmem_addr (ahb_dmem_haddr[$clog2(ROM_SIZE)+1:2]),
     .dmem_trans (ahb_dmem_htrans),
 
-    .dmem_ready (hreadyout),
-    .dmem_resp (hresp),
+    .dmem_ready (dmem_ready),
+    .dmem_resp (dmem_resp),
     .dmem_data (hrdata_1)
 );
 
@@ -373,7 +380,8 @@ soc_ahb_slave_mux(
     
     .hrdata (ahb_dmem_hrdata),
     .hresp (ahb_dmem_hresp),
-    .hready (ahb_dmem_hready)
+    .hready (ahb_dmem_hready),
+    .DBG_LED (LED0)
 );
 
 // always_ff @(posedge clock)
@@ -385,9 +393,9 @@ always_ff @(posedge cpu_clk)begin
     if(imem_hsel) begin 
         LED5 <= 0;
     end
-    if(hsel[0] == 1'b1)begin 
-        LED3 <= 0;
-    end
+    // if(DBG_LED)begin 
+    //     LED3 <= 0;
+    // end
 end
 
 //==========================================================
@@ -408,23 +416,24 @@ endmodule: tang20k_scr1
 
 module ahb_slave_mux
 (
-    input       [  SLAVE_DEVISES_CNT-1:0]    hsel_s,
+    input        [SLAVE_DEVISES_CNT-1:0]    hsel_s,
 
-    input       [                   31:0]    rdata_0,
-    input       [                   31:0]    rdata_1,
-    input       [SLAVE_DEVISES_CNT - 1:0]    resp,
-    input       [  SLAVE_DEVISES_CNT-1:0]    readyout,
+    input        [31:0                   ]  rdata_0,
+    input        [31:0                   ]  rdata_1,
+    input        [SLAVE_DEVISES_CNT-1:0  ]  resp,
+    input        [SLAVE_DEVISES_CNT-1:0  ]  readyout,
 
-    output logic  [                   31:0]    hrdata,
-    output logic                               hresp,
-    output logic                                  hready
+    output logic [31:0                   ]  hrdata,
+    output logic                            hresp,
+    output logic                            hready,
+    output logic                            DBG_LED
 );
     reg ready;
 
-    always @*
+    always @*   //попробовать с always_comb
         case (hsel_s)
-            2'b?1 : begin hrdata = rdata_0; hresp = resp[0]; ready = readyout[0]; end
-            2'b10 : begin hrdata = rdata_1; hresp = resp[1]; ready = readyout[1]; end
+            2'b?1 : begin hrdata = rdata_0; hresp = resp[0]; ready = readyout[0]; DBG_LED = 0; end
+            2'b10 : begin hrdata = rdata_1; hresp = resp[1]; ready = readyout[1]; DBG_LED = 0; end
             default    : begin hrdata = rdata_1; hresp = resp[1]; ready = readyout[1]; end
         endcase
         assign hready = ready;
@@ -435,18 +444,18 @@ module rom_mem
     input                                    clk,
     input        [SLAVE_DEVISES_CNT-1:0]     hsel,
 
-    input         [$clog2(ROM_SIZE)+1:2]     imem_addr,
-    input                          [2:0]     imem_trans,
+    input        [$clog2(ROM_SIZE)+1:2 ]     imem_addr,
+    input        [1:0                  ]     imem_trans,
     input                                    imem_hsel,
     output                                   imem_ready,
     output                                   imem_resp,
-    output logic         [SCR1_AHB_WIDTH-1:0]      imem_data,
+    output logic [SCR1_AHB_WIDTH-1:0   ]     imem_data,
 
-    input        [$clog2(ROM_SIZE)+1:2]      dmem_addr,
-    input                         [2:0]      dmem_trans,
-    output      [SLAVE_DEVISES_CNT-1:0]      dmem_ready,
-    output      [SLAVE_DEVISES_CNT-1:0]      dmem_resp,
-    output logic         [SCR1_AHB_WIDTH-1:0]      dmem_data
+    input        [$clog2(ROM_SIZE)+1:2 ]     dmem_addr,
+    input        [1:0                  ]     dmem_trans,
+    output                                   dmem_ready,
+    output                                   dmem_resp,
+    output logic [SCR1_AHB_WIDTH-1:0   ]     dmem_data
 );
     (* ram_style = "block" *)  logic  [32-1:0]  ram_block_3  [16383:0] /* synthesis syn_ramstyle = "block_ram" */;
 
@@ -457,8 +466,8 @@ module rom_mem
     assign imem_ready = 1'b1;
     assign imem_resp = 1'b0;
 
-    assign dmem_ready[1] = 1'b1;
-    assign dmem_resp[1] = 1'b0;
+    assign dmem_ready = 1'b1;
+    assign dmem_resp = 1'b0;
     
     always_ff @(posedge clk) begin
             if(rom_imem_need_action) begin
@@ -469,9 +478,9 @@ module rom_mem
             end
     end
 
-    // initial begin
-        // $readmemh("test_2.hex", ram_block_3);
-    // end
+    initial begin
+        $readmemh("test_2.hex", ram_block_3);
+    end
 endmodule: rom_mem
 
 // Do not delete, this is a loopback FSM for uart
