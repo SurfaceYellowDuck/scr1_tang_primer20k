@@ -18,7 +18,7 @@ module ahb_lite_uart16550(
     input       [  2 : 0 ]              HBURST,
     input                               HMASTLOCK,  // ignored
     input       [  3 : 0 ]              HPROT,      // ignored
-    input       [  1 : 0 ]              HSEL,
+    input                               HSEL,
     input       [  2 : 0 ]              HSIZE,
     input       [  1 : 0 ]              HTRANS,
     input       [ 31 : 0 ]              HWDATA,
@@ -67,7 +67,7 @@ module ahb_lite_uart16550(
     wire [ 7:0 ]    ReadData;
 
     parameter       HTRANS_IDLE       = 2'b0;
-    wire            NeedAction = HTRANS != HTRANS_IDLE && (HSEL[0] == 1'b1);
+    wire            NeedAction = HTRANS != HTRANS_IDLE && (HSEL == 1'b1);
     always @ (*) begin
         //State change decision
         case(State)
@@ -80,7 +80,7 @@ module ahb_lite_uart16550(
     always @ (posedge HCLK) begin
         case(State)
             S_INIT      :   ;
-            S_IDLE      :   if(HSEL[0] == 1'b1) ADDR_old <= ADDR;
+            S_IDLE      :   if(HSEL == 1'b1) ADDR_old <= ADDR;
             S_READ      :   HRDATA <= { 24'b0, ReadData};
             S_WRITE     :   ;
         endcase

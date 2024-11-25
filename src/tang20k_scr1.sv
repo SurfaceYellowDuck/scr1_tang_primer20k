@@ -290,16 +290,19 @@ assign scr1_irq = uart_irq;
 //         // LED4 <= 1;
 //     end
 // end
-logic [SCR1_AHB_WIDTH-1:0] uart_data;
+// logic [SCR1_AHB_WIDTH-1:0] uart_data;
 logic                      uart_hready;
 logic                      uart_hresp;
+logic                      uart_hsel;
 
 logic                      dmem_ready;
 logic                      dmem_resp;
+logic                      dmem_hsel;
 
+                      
 assign hreadyout = {uart_hready, dmem_ready};
 assign hresp = {uart_hresp, dmem_resp};
-
+assign hsel = {uart_hsel, dmem_hsel};
 
 
 ahb_lite_uart16550
@@ -310,7 +313,7 @@ i_uart(
     .HBURST (ahb_dmem_hburst),
     .HMASTLOCK (1'b1),
     .HPROT (ahb_dmem_hprot),
-    .HSEL (hsel),
+    .HSEL (uart_hsel),
     .HSIZE (ahb_dmem_hsize),
     .HTRANS (ahb_dmem_htrans),
     .HWDATA (ahb_dmem_hwdata),
@@ -337,8 +340,8 @@ i_uart(
 
 // logic hsel_uart;
 // logic hsel_rom;
-assign hsel[0] = ahb_dmem_haddr[31:16] == 16'b1111_1111_1101_1111;  //uart
-assign hsel[1] = ahb_dmem_haddr[31:16] ==  16'b1111_1111_1110_1111; //rom
+assign uart_hsel = ahb_dmem_haddr[31:16] == 16'b1111_1111_1101_1111;  //uart
+assign dmem_hsel = ahb_dmem_haddr[31:16] ==  16'b1111_1111_1110_1111; //rom
 assign imem_hsel = ahb_imem_haddr[31:16] ==  16'b1111_1111_1110_1111;
 // always_comb @(posedge cpu_clk) begin 
 //     if(soc_rst_n)begin 
@@ -352,7 +355,7 @@ assign imem_hsel = ahb_imem_haddr[31:16] ==  16'b1111_1111_1110_1111;
 rom_mem 
 soc_rom_mem(
     .clk (cpu_clk),
-    .hsel (hsel),
+    .hsel (dmem_hsel),
 
     .imem_addr (ahb_imem_haddr[$clog2(ROM_SIZE)+1:2]),
     .imem_trans (ahb_imem_htrans),
@@ -430,19 +433,20 @@ module ahb_slave_mux
 );
     reg ready;
 
-    always @*   //попробовать с always_comb
+    always_comb begin   //попробовать с always_comb
         case (hsel_s)
             2'b?1 : begin hrdata = rdata_0; hresp = resp[0]; ready = readyout[0]; DBG_LED = 0; end
-            2'b10 : begin hrdata = rdata_1; hresp = resp[1]; ready = readyout[1]; DBG_LED = 0; end
+            2'b10 : begin hrdata = rdata_1; hresp = resp[1]; ready = readyout[1];  end
             default    : begin hrdata = rdata_1; hresp = resp[1]; ready = readyout[1]; end
         endcase
-        assign hready = ready;
+        hready = ready;
+    end
 endmodule: ahb_slave_mux
 
 module rom_mem
 (
     input                                    clk,
-    input        [SLAVE_DEVISES_CNT-1:0]     hsel,
+    input                                    hsel,
 
     input        [$clog2(ROM_SIZE)+1:2 ]     imem_addr,
     input        [1:0                  ]     imem_trans,
