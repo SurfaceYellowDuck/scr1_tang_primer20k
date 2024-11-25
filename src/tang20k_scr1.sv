@@ -12,8 +12,9 @@
 //User-defined board-specific parameters accessible as memory-mapped GPIO
 //parameter bit [31:0] FPGA_PRIMER20K_SOC_ID           = `SCR1_PTFM_SOC_ID;
 //parameter bit [31:0] FPGA_PRIMER20K_BLD_ID           = `SCR1_PTFM_BLD_ID;
-parameter bit [31:0] FPGA_TANG20K_CORE_CLK_FREQ    = `SCR1_PTFM_CORE_CLK_FREQ;
-
+parameter bit [31:0] FPGA_TANG20K_CORE_CLK_FREQ    = `SCR1_PTFM_CORE_CLK_FREQ;  
+parameter            SLAVE_DEVISES_CNT             = 2;
+parameter            ROM_SIZE                      = 16384;
 module tang20k_scr1 (
     // === CLOCK ===========================================
     input  logic                    CLK,
@@ -80,6 +81,14 @@ logic [31:0]                        scr1_irq;
 `else
 logic                               scr1_irq;
 `endif // SCR1_IPIC_EN
+
+wire  [SLAVE_DEVISES_CNT-1:0]  hreadyout;
+wire  [SLAVE_DEVISES_CNT-1:0]  hresp;
+wire  [SLAVE_DEVISES_CNT-1:0]  hsel;
+wire                               imem_hsel;
+logic [SCR1_AHB_WIDTH-1:0]         hrdata_0;
+logic [SCR1_AHB_WIDTH-1:0]         hrdata_1;
+
 
 // --- UART ---------------------------------------------
 logic                               uart_rts_n; // <- UART
@@ -255,46 +264,37 @@ assign scr1_irq = {31'd0, uart_irq};
 assign scr1_irq = uart_irq;
 `endif // SCR1_IPIC_EN
 
-logic hsel_uart;
-logic hsel_rom;
-assign hsel_uart = ahb_dmem_haddr[31:16] == 16'b1111_1111_1101_1111;
-assign hsel_rom = ahb_imem_haddr[31:16] ==  16'b1111_1111_1110_1111;
+// always_comb begin 
+//     if(uart_hready)begin 
+//         ahb_dmem_hready = uart_hready;
+//         ahb_dmem_hresp = uart_hresp;
+//         ahb_dmem_hrdata = uart_data;
+//     end
+//     // else if(rom_dmem_hready)begin
+//     //     ahb_dmem_hready = rom_dmem_hready;
+//     //     ahb_dmem_hresp = rom_dmem_hresp;
+//     //     ahb_dmem_hrdata = rom_dmem_data;
+//     // end
+// end
 
 
-
-(* ram_style = "block" *)  logic  [32-1:0]  ram_block_3  [16383:0] /* synthesis syn_ramstyle = "block_ram" */;
-
-
-wire rom_imem_need_action = (ahb_imem_htrans != 2'b00) && hsel_rom;
-wire rom_dmem_need_action = (ahb_dmem_htrans != 2'b00) && hsel_rom;
-
-assign ahb_imem_hready = 1;
-assign ahb_imem_hresp = 1'b0; 
-assign ahb_dmem_hready = rom_dmem_need_action == 1; // ?? CONCURRENCY
-assign ahb_dmem_hresp = 1'b0; // ?? CONCURRENCY
-
-always_ff @(posedge cpu_clk) begin
-        if(rom_imem_need_action) begin
-            ahb_imem_hrdata <= ram_block_3[ahb_imem_haddr[$clog2(16384)+1:2]];
-        end
-        if(rom_dmem_need_action) begin 
-            ahb_dmem_hrdata <= ram_block_3[ahb_dmem_haddr[$clog2(16384)+1:2]];
-        end
-end
+// always_ff @(posedge cpu_clk) begin 
+//     if(ahb_imem_haddr == 32'hffef0f08) begin 
+//         LED4 <= 0;
+//     end
+//     if(ahb_imem_haddr == 32'hffef05f50) begin 
+//         LED5 <= 0;
+//     end
+//     else begin 
+//         // LED5 <= 1;
+//         // LED4 <= 1;
+//     end
+// end
+logic [SCR1_AHB_WIDTH-1:0] uart_data;
+logic                      uart_hready;
+logic                      uart_hresp;
 
 
-always_ff @(posedge cpu_clk) begin 
-    if(ahb_imem_haddr == 32'hffef0f08) begin 
-        LED4 <= 0;
-    end
-    if(ahb_imem_haddr == 32'hffef05f50) begin 
-        LED5 <= 0;
-    end
-    else begin 
-        // LED5 <= 1;
-        // LED4 <= 1;
-    end
-end
 
 ahb_lite_uart16550
 i_uart(
@@ -304,14 +304,14 @@ i_uart(
     .HBURST (ahb_dmem_hburst),
     .HMASTLOCK (1'b1),
     .HPROT (ahb_dmem_hprot),
-    .HSEL (hsel_uart),
+    .HSEL (hsel),
     .HSIZE (ahb_dmem_hsize),
     .HTRANS (ahb_dmem_htrans),
     .HWDATA (ahb_dmem_hwdata),
     .HWRITE (ahb_dmem_hwrite),
-    .HRDATA (ahb_dmem_hrdata),
-    .HREADY (ahb_dmem_hready),
-    .HRESP (ahb_dmem_hresp),
+    .HRDATA (hrdata_0),
+    .HREADY (hreadyout),
+    .HRESP (hresp),
     .SI_Endian (1'b1),
 
     .UART_SRX (UART_RX),
@@ -326,12 +326,153 @@ i_uart(
     .UART_INT (uart_irq)
 );
 
-initial begin
-    $readmemh("scbl.mem", ram_block_3);
-end
 
+// logic hsel_uart;
+// logic hsel_rom;
+assign hsel[0] = ahb_dmem_haddr[31:16] == 16'b1111_1111_1101_1111;  //uart
+assign hsel[1] = ahb_dmem_haddr[31:16] ==  16'b1111_1111_1110_1111; //rom
+assign imem_hsel = ahb_imem_haddr[31:16] ==  16'b1111_1111_1110_1111;
+
+// always_comb @(posedge cpu_clk) begin 
+//     if(soc_rst_n)begin 
+//         hsel[1:0] = 2'b0;
+//     end
+//     else begin 
+
+//     end
+// end
+
+rom_mem 
+soc_rom_mem(
+    .clk (cpu_clk),
+    .hsel (hsel),
+
+    .imem_addr (ahb_imem_haddr[$clog2(ROM_SIZE)+1:2]),
+    .imem_trans (ahb_imem_htrans),
+    .imem_hsel (imem_hsel),
+
+    .imem_ready (ahb_imem_hready),
+    .imem_resp (ahb_imem_hresp),
+    .imem_data (ahb_imem_hrdata),
+
+    .dmem_addr (ahb_dmem_haddr[$clog2(ROM_SIZE)+1:2]),
+    .dmem_trans (ahb_dmem_htrans),
+
+    .dmem_ready (hreadyout),
+    .dmem_resp (hresp),
+    .dmem_data (hrdata_1)
+);
+
+ahb_slave_mux
+soc_ahb_slave_mux(
+    .hsel_s (hsel),
+    .rdata_0 (hrdata_0),
+    .rdata_1 (hrdata_1),
+    .resp (hresp),
+    .readyout (hreadyout),
+    
+    .hrdata (ahb_dmem_hrdata),
+    .hresp (ahb_dmem_hresp),
+    .hready (ahb_dmem_hready)
+);
 
 // always_ff @(posedge clock)
+
+always_ff @(posedge cpu_clk)begin 
+    if(hsel == 2'b10) begin 
+        LED4 <= 0;
+    end
+    if(imem_hsel) begin 
+        LED5 <= 0;
+    end
+    if(hsel[0] == 1'b1)begin 
+        LED3 <= 0;
+    end
+end
+
+//==========================================================
+// LEDs
+//==========================================================
+// assign LED2      =  pwrup_rst_n;
+// assign LED3      =  hard_rst_n;
+// assign LED4      =  cpu_rst_n;
+// assign LED5      =  heartbeat;
+
+endmodule: tang20k_scr1
+
+// module ahb_selector
+// (
+//     input       [SCR1_AHB_WIDTH-1:0]          ahb_imem_haddr;
+// ) 
+// endmodule
+
+module ahb_slave_mux
+(
+    input       [  SLAVE_DEVISES_CNT-1:0]    hsel_s,
+
+    input       [                   31:0]    rdata_0,
+    input       [                   31:0]    rdata_1,
+    input       [SLAVE_DEVISES_CNT - 1:0]    resp,
+    input       [  SLAVE_DEVISES_CNT-1:0]    readyout,
+
+    output logic  [                   31:0]    hrdata,
+    output logic                               hresp,
+    output logic                                  hready
+);
+    reg ready;
+
+    always @*
+        case (hsel_s)
+            2'b?1 : begin hrdata = rdata_0; hresp = resp[0]; ready = readyout[0]; end
+            2'b10 : begin hrdata = rdata_1; hresp = resp[1]; ready = readyout[1]; end
+            default    : begin hrdata = rdata_1; hresp = resp[1]; ready = readyout[1]; end
+        endcase
+        assign hready = ready;
+endmodule: ahb_slave_mux
+
+module rom_mem
+(
+    input                                    clk,
+    input        [SLAVE_DEVISES_CNT-1:0]     hsel,
+
+    input         [$clog2(ROM_SIZE)+1:2]     imem_addr,
+    input                          [2:0]     imem_trans,
+    input                                    imem_hsel,
+    output                                   imem_ready,
+    output                                   imem_resp,
+    output logic         [SCR1_AHB_WIDTH-1:0]      imem_data,
+
+    input        [$clog2(ROM_SIZE)+1:2]      dmem_addr,
+    input                         [2:0]      dmem_trans,
+    output      [SLAVE_DEVISES_CNT-1:0]      dmem_ready,
+    output      [SLAVE_DEVISES_CNT-1:0]      dmem_resp,
+    output logic         [SCR1_AHB_WIDTH-1:0]      dmem_data
+);
+    (* ram_style = "block" *)  logic  [32-1:0]  ram_block_3  [16383:0] /* synthesis syn_ramstyle = "block_ram" */;
+
+    logic rom_imem_need_action;
+    logic rom_dmem_need_action;
+    assign rom_imem_need_action = (imem_trans != 2'b00) && imem_hsel;
+    assign rom_dmem_need_action = (dmem_trans != 2'b00) && hsel == 2'b10;
+    assign imem_ready = 1'b1;
+    assign imem_resp = 1'b0;
+
+    assign dmem_ready[1] = 1'b1;
+    assign dmem_resp[1] = 1'b0;
+    
+    always_ff @(posedge clk) begin
+            if(rom_imem_need_action) begin
+                imem_data <= ram_block_3[imem_addr];
+            end
+            if(rom_dmem_need_action) begin
+                dmem_data <= ram_block_3[dmem_addr];
+            end
+    end
+
+    // initial begin
+        // $readmemh("test_2.hex", ram_block_3);
+    // end
+endmodule: rom_mem
 
 // Do not delete, this is a loopback FSM for uart
 // **************************************************************************************************
@@ -396,13 +537,3 @@ end
 //     end
 // end
 // **************************************************************************************************
-
-//==========================================================
-// LEDs
-//==========================================================
-// assign LED2      =  pwrup_rst_n;
-// assign LED3      =  hard_rst_n;
-// assign LED4      =  cpu_rst_n;
-// assign LED5      =  heartbeat;
-
-endmodule: tang20k_scr1

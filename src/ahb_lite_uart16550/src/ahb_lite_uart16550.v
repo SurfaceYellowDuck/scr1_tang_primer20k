@@ -18,14 +18,14 @@ module ahb_lite_uart16550(
     input       [  2 : 0 ]              HBURST,
     input                               HMASTLOCK,  // ignored
     input       [  3 : 0 ]              HPROT,      // ignored
-    input                               HSEL,
+    input       [  1 : 0 ]              HSEL,
     input       [  2 : 0 ]              HSIZE,
     input       [  1 : 0 ]              HTRANS,
     input       [ 31 : 0 ]              HWDATA,
     input                               HWRITE,
     output  reg [ 31 : 0 ]              HRDATA,
-    output                              HREADY,
-    output                              HRESP,
+    output      [  1 : 0 ]              HREADY,
+    output      [  1 : 0 ]              HRESP,
     input                               SI_Endian,  // ignored
 
     //UART side
@@ -50,8 +50,8 @@ module ahb_lite_uart16550(
     
     reg  [ 1:0 ]    State, Next;
 
-    assign      HRESP  = 1'b0;
-    assign      HREADY = (State ==  S_IDLE);
+    assign      HRESP[0]  = 1'b0;
+    assign      HREADY[0] = (State ==  S_IDLE);
 
     always @ (posedge HCLK) begin
         if (~HRESETn)
@@ -65,7 +65,7 @@ module ahb_lite_uart16550(
     wire [ 7:0 ]    ReadData;
 
     parameter       HTRANS_IDLE       = 2'b0;
-    wire            NeedAction = HTRANS != HTRANS_IDLE && HSEL;
+    wire            NeedAction = HTRANS != HTRANS_IDLE && (HSEL[0] == 1'b1);
 
     always @ (*) begin
         //State change decision
@@ -79,7 +79,7 @@ module ahb_lite_uart16550(
     always @ (posedge HCLK) begin
         case(State)
             S_INIT      :   ;
-            S_IDLE      :   if(HSEL) ADDR_old <= ADDR;
+            S_IDLE      :   if(HSEL[0] == 1'b1) ADDR_old <= ADDR;
             S_READ      :   HRDATA <= { 24'b0, ReadData};
             S_WRITE     :   ;
         endcase
