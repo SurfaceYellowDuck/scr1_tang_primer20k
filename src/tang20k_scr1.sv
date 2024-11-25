@@ -433,9 +433,9 @@ module ahb_slave_mux
 );
     reg ready;
 
-    always_comb begin   //попробовать с always_comb
-        case (hsel_s)
-            2'b?1 : begin hrdata = rdata_0; hresp = resp[0]; ready = readyout[0]; DBG_LED = 0; end
+    always @* begin   //попробовать с always_comb
+        casez (hsel_s)
+            2'b?1 : begin hrdata = rdata_0; hresp = resp[0]; ready = readyout[0]; DBG_LED = 0;  end
             2'b10 : begin hrdata = rdata_1; hresp = resp[1]; ready = readyout[1];  end
             default    : begin hrdata = rdata_1; hresp = resp[1]; ready = readyout[1]; end
         endcase
