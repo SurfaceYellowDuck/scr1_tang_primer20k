@@ -84,7 +84,7 @@ logic                               scr1_irq;
 
 wire  [SLAVE_DEVISES_CNT-1:0]  hreadyout;
 wire  [SLAVE_DEVISES_CNT-1:0]  hresp;
-wire  [SLAVE_DEVISES_CNT-1:0]  hsel;
+wire  [SLAVE_DEVISES_CNT-1:0]  hsel_;
 wire                               imem_hsel;
 logic [SCR1_AHB_WIDTH-1:0]         hrdata_0;
 logic [SCR1_AHB_WIDTH-1:0]         hrdata_1;
@@ -299,10 +299,14 @@ logic                      dmem_ready;
 logic                      dmem_resp;
 logic                      dmem_hsel;
 
-                      
-assign hreadyout = {uart_hready, dmem_ready};
-assign hresp = {uart_hresp, dmem_resp};
-assign hsel = {uart_hsel, dmem_hsel};
+
+assign uart_hsel = ahb_dmem_haddr[31:16] ==  16'b1111_1111_1101_1111;  //uart
+assign dmem_hsel = ahb_dmem_haddr[31:16] ==  16'b1111_1111_1110_1111; //rom
+assign imem_hsel = ahb_imem_haddr[31:16] ==  16'b1111_1111_1110_1111;
+
+assign hsel_ = {dmem_hsel, uart_hsel};                      
+assign hreadyout = {dmem_ready, uart_hready};
+assign hresp = {dmem_resp, uart_hresp};
 
 
 ahb_lite_uart16550
@@ -338,24 +342,11 @@ i_uart(
 );
 
 
-// logic hsel_uart;
-// logic hsel_rom;
-assign uart_hsel = ahb_dmem_haddr[31:16] == 16'b1111_1111_1101_1111;  //uart
-assign dmem_hsel = ahb_dmem_haddr[31:16] ==  16'b1111_1111_1110_1111; //rom
-assign imem_hsel = ahb_imem_haddr[31:16] ==  16'b1111_1111_1110_1111;
-// always_comb @(posedge cpu_clk) begin 
-//     if(soc_rst_n)begin 
-//         hsel[1:0] = 2'b0;
-//     end
-//     else begin 
-
-//     end
-// end
-
 rom_mem 
 soc_rom_mem(
     .clk (cpu_clk),
-    .hsel (dmem_hsel),
+    .rst_n (soc_rst_n),
+    .dmem_hsel (dmem_hsel),
 
     .imem_addr (ahb_imem_haddr[$clog2(ROM_SIZE)+1:2]),
     .imem_trans (ahb_imem_htrans),
@@ -375,7 +366,8 @@ soc_rom_mem(
 
 ahb_slave_mux
 soc_ahb_slave_mux(
-    .hsel_s (hsel),
+    .clk (cpu_clk),
+    .hsel_s (hsel_),
     .rdata_0 (hrdata_0),
     .rdata_1 (hrdata_1),
     .resp (hresp),
@@ -384,41 +376,15 @@ soc_ahb_slave_mux(
     .hrdata (ahb_dmem_hrdata),
     .hresp (ahb_dmem_hresp),
     .hready (ahb_dmem_hready),
-    .DBG_LED (LED0)
+    .DBG_LED (LED1),
+    .DBG_LED1 (LED2)
 );
-
-// always_ff @(posedge clock)
-
-always_ff @(posedge cpu_clk)begin 
-    if(hsel == 2'b10) begin 
-        LED4 <= 0;
-    end
-    if(imem_hsel) begin 
-        LED5 <= 0;
-    end
-    // if(DBG_LED)begin 
-    //     LED3 <= 0;
-    // end
-end
-
-//==========================================================
-// LEDs
-//==========================================================
-// assign LED2      =  pwrup_rst_n;
-// assign LED3      =  hard_rst_n;
-// assign LED4      =  cpu_rst_n;
-// assign LED5      =  heartbeat;
 
 endmodule: tang20k_scr1
 
-// module ahb_selector
-// (
-//     input       [SCR1_AHB_WIDTH-1:0]          ahb_imem_haddr;
-// ) 
-// endmodule
-
 module ahb_slave_mux
 (
+    input                                   clk,
     input        [SLAVE_DEVISES_CNT-1:0]    hsel_s,
 
     input        [31:0                   ]  rdata_0,
@@ -429,25 +395,39 @@ module ahb_slave_mux
     output logic [31:0                   ]  hrdata,
     output logic                            hresp,
     output logic                            hready,
-    output logic                            DBG_LED
-);
-    reg ready;
+    output logic                            DBG_LED,
+    output logic                            DBG_LED1
 
-    always @* begin   //попробовать с always_comb
-        casez (hsel_s)
-            2'b?1 : begin hrdata = rdata_0; hresp = resp[0]; ready = readyout[0]; DBG_LED = 0;  end
-            2'b10 : begin hrdata = rdata_1; hresp = resp[1]; ready = readyout[1];  end
-            default    : begin hrdata = rdata_1; hresp = resp[1]; ready = readyout[1]; end
-        endcase
-        hready = ready;
+);
+    logic [SLAVE_DEVISES_CNT-1:0] local_hsel;
+    always_ff @(posedge clk)begin 
+        local_hsel <= hsel_s;
+        if(hsel_s == 2'b01) begin
+            DBG_LED1 <= 0;
+        end
     end
+    always_comb begin
+        if(local_hsel[0] == 1) begin 
+            hrdata = rdata_0; 
+            hresp = resp[0]; 
+            hready = readyout[0]; 
+            DBG_LED = 0;
+        end
+        if (local_hsel[1] == 1 && local_hsel[0] == 0) begin 
+            hrdata = rdata_1; 
+            hresp = resp[1]; 
+            hready = readyout[1]; 
+            DBG_LED = 0;
+        end
+    end
+
+
 endmodule: ahb_slave_mux
 
 module rom_mem
 (
     input                                    clk,
-    input                                    hsel,
-
+    input                                    rst_n,
     input        [$clog2(ROM_SIZE)+1:2 ]     imem_addr,
     input        [1:0                  ]     imem_trans,
     input                                    imem_hsel,
@@ -457,8 +437,9 @@ module rom_mem
 
     input        [$clog2(ROM_SIZE)+1:2 ]     dmem_addr,
     input        [1:0                  ]     dmem_trans,
-    output                                   dmem_ready,
-    output                                   dmem_resp,
+    input                                    dmem_hsel,
+    output reg                               dmem_ready,
+    output reg                               dmem_resp,
     output logic [SCR1_AHB_WIDTH-1:0   ]     dmem_data
 );
     (* ram_style = "block" *)  logic  [32-1:0]  ram_block_3  [16383:0] /* synthesis syn_ramstyle = "block_ram" */;
@@ -466,19 +447,23 @@ module rom_mem
     logic rom_imem_need_action;
     logic rom_dmem_need_action;
     assign rom_imem_need_action = (imem_trans != 2'b00) && imem_hsel;
-    assign rom_dmem_need_action = (dmem_trans != 2'b00) && hsel == 2'b10;
+    assign rom_dmem_need_action = (dmem_trans != 2'b00) && dmem_hsel;
     assign imem_ready = 1'b1;
     assign imem_resp = 1'b0;
 
-    assign dmem_ready = 1'b1;
-    assign dmem_resp = 1'b0;
     
     always_ff @(posedge clk) begin
+            if(~rst_n) begin 
+                dmem_ready <= 1'b1;
+                dmem_resp <= 1'b0;
+            end
             if(rom_imem_need_action) begin
                 imem_data <= ram_block_3[imem_addr];
             end
             if(rom_dmem_need_action) begin
                 dmem_data <= ram_block_3[dmem_addr];
+                dmem_ready <= 1'b1;
+                dmem_resp <= 1'b0;
             end
     end
 
