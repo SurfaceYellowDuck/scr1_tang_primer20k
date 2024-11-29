@@ -14,7 +14,7 @@
 //parameter bit [31:0] FPGA_PRIMER20K_BLD_ID           = `SCR1_PTFM_BLD_ID;
 parameter bit [31:0] FPGA_TANG20K_CORE_CLK_FREQ    = `SCR1_PTFM_CORE_CLK_FREQ;  
 parameter            SLAVE_DEVISES_CNT             = 2;
-parameter            ROM_SIZE                      = 32767;
+parameter            ROM_SIZE                      = 32768;
 module tang20k_scr1 (
     // === CLOCK ===========================================
     input  logic                    CLK,
@@ -442,7 +442,7 @@ module rom_mem
     output reg                               dmem_resp,
     output logic [SCR1_AHB_WIDTH-1:0   ]     dmem_data
 );
-    (* ram_style = "block" *)  logic  [SCR1_AHB_WIDTH-1:0]  ram_block_3  [ROM_SIZE:0] /* synthesis syn_ramstyle = "block_ram" */;
+    (* ram_style = "block" *)  logic  [SCR1_AHB_WIDTH-1:0]  rom_block  [ROM_SIZE-1:0] /* synthesis syn_ramstyle = "block_ram" */;
 
     logic rom_imem_need_action;
     logic rom_dmem_need_action;
@@ -458,17 +458,17 @@ module rom_mem
                 dmem_resp <= 1'b0;
             end
             if(rom_imem_need_action) begin
-                imem_data <= ram_block_3[imem_addr];
+                imem_data <= rom_block[imem_addr];
             end
             if(rom_dmem_need_action) begin
-                dmem_data <= ram_block_3[dmem_addr];
+                dmem_data <= rom_block[dmem_addr];
                 dmem_ready <= 1'b1;
                 dmem_resp <= 1'b0;
             end
     end
 
     initial begin
-        $readmemh("scbl_1.mem", ram_block_3);
+        $readmemh("scbl_big.mem", rom_block);
     end
 endmodule: rom_mem
 
