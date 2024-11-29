@@ -322,6 +322,7 @@ i_uart(
     .HTRANS (ahb_dmem_htrans),
     .HWDATA (ahb_dmem_hwdata),
     .HWRITE (ahb_dmem_hwrite),
+    .HREADY_IN (ahb_dmem_hready),
     .HRDATA (hrdata_0),
     .HREADY (uart_hready),
     .HRESP (uart_hresp),
@@ -347,6 +348,7 @@ soc_rom_mem(
     .clk (cpu_clk),
     .rst_n (soc_rst_n),
     .dmem_hsel (dmem_hsel),
+    .dmem_hready_in(ahb_dmem_hready),
 
     .imem_addr (ahb_imem_haddr[$clog2(ROM_SIZE)+1:2]),
     .imem_trans (ahb_imem_htrans),
@@ -367,6 +369,8 @@ soc_rom_mem(
 ahb_slave_mux
 soc_ahb_slave_mux(
     .clk (cpu_clk),
+    .rst_n (soc_rst_n),
+    .htrans (ahb_dmem_htrans),
     .hsel_s (hsel_),
     .rdata_0 (hrdata_0),
     .rdata_1 (hrdata_1),
@@ -385,7 +389,9 @@ endmodule: tang20k_scr1
 module ahb_slave_mux
 (
     input                                   clk,
+    input                                   rst_n,
     input        [SLAVE_DEVISES_CNT-1:0]    hsel_s,
+    input        [1:0                  ]    htrans,
 
     input        [31:0                   ]  rdata_0,
     input        [31:0                   ]  rdata_1,
@@ -399,27 +405,64 @@ module ahb_slave_mux
     output logic                            DBG_LED1
 
 );
-    logic [SLAVE_DEVISES_CNT-1:0] local_hsel;
-    always_ff @(posedge clk)begin 
+logic [SLAVE_DEVISES_CNT-1:0] local_hsel;
+always_ff @(posedge clk)begin 
+    if(~rst_n)begin
+        local_hsel <= 2'b0;
+    end
+    // else if(htrans != 2'b0 && hsel_s != 2'b0) begin 
+    else if(htrans != 2'b0 && hsel_s != 2'b0) begin
+        DBG_LED1 <= 1'b0;
         local_hsel <= hsel_s;
-        if(hsel_s == 2'b01) begin
-            DBG_LED1 <= 0;
-        end
     end
-    always_comb begin
-        if(local_hsel[0] == 1) begin 
-            hrdata = rdata_0; 
-            hresp = resp[0]; 
-            hready = readyout[0]; 
-            DBG_LED = 0;
-        end
-        if (local_hsel[1] == 1 && local_hsel[0] == 0) begin 
-            hrdata = rdata_1; 
-            hresp = resp[1]; 
-            hready = readyout[1]; 
-            DBG_LED = 0;
-        end
+    // end
+    // if(hsel_s == 2'b01) begin
+    //     DBG_LED1 <= 0;
+    // end
+end
+always @* begin
+    if(local_hsel[0] == 1) begin
+        hresp = resp[0];
+        hrdata = rdata_0;
+        hready = readyout[0];
+        DBG_LED = 0;
     end
+    else if (local_hsel[1] == 1) begin 
+        hready = readyout[1];
+        hrdata = rdata_1;
+        hresp = resp[1];
+        DBG_LED = 0;
+    end
+    else begin
+        hready = 1'b1;
+        hrdata = 32'b0;
+        hresp = 1'b0;
+        DBG_LED = 0;
+    end
+    // if(hready) begin
+    //     local_hsel = 2'b0;
+    // end
+end
+// always_ff @(posedge clk) begin
+//         if(local_hsel[0] == 1) begin 
+//             hrdata <= rdata_0;
+//             hresp <= resp[0];
+//             hready <= readyout[0];
+//             DBG_LED <= 0;
+//         end
+//         if (local_hsel[1] == 1 && local_hsel[0] == 0) begin 
+//             hrdata <= rdata_1; 
+//             hresp <= resp[1]; 
+//             hready <= readyout[1];
+//             DBG_LED <= 0;
+//         end
+//         else begin 
+//             hrdata <= 32'b0;
+//             hresp <= 1'b0;
+//             hready <= 1'b1;
+//             DBG_LED <= 0;
+//         end
+//     end
 
 
 endmodule: ahb_slave_mux
@@ -438,6 +481,7 @@ module rom_mem
     input        [$clog2(ROM_SIZE)+1:2 ]     dmem_addr,
     input        [1:0                  ]     dmem_trans,
     input                                    dmem_hsel,
+    input                                    dmem_hready_in,
     output reg                               dmem_ready,
     output reg                               dmem_resp,
     output logic [SCR1_AHB_WIDTH-1:0   ]     dmem_data
@@ -447,7 +491,7 @@ module rom_mem
     logic rom_imem_need_action;
     logic rom_dmem_need_action;
     assign rom_imem_need_action = (imem_trans != 2'b00) && imem_hsel;
-    assign rom_dmem_need_action = (dmem_trans != 2'b00) && dmem_hsel;
+    assign rom_dmem_need_action = (dmem_trans != 2'b00) && dmem_hsel && dmem_hready_in;
     assign imem_ready = 1'b1;
     assign imem_resp = 1'b0;
 
@@ -468,7 +512,7 @@ module rom_mem
     end
 
     initial begin
-        $readmemh("scbl_big.mem", rom_block);
+        $readmemh("scbl_ksmirnov.hex", rom_block);
     end
 endmodule: rom_mem
 

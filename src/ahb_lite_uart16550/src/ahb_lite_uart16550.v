@@ -23,6 +23,7 @@ module ahb_lite_uart16550(
     input       [  1 : 0 ]              HTRANS,
     input       [ 31 : 0 ]              HWDATA,
     input                               HWRITE,
+    input                               HREADY_IN,
     output  reg [ 31 : 0 ]              HRDATA,
     output                              HREADY,
     output                              HRESP,
@@ -67,7 +68,7 @@ module ahb_lite_uart16550(
     wire [ 7:0 ]    ReadData;
 
     parameter       HTRANS_IDLE       = 2'b0;
-    wire            NeedAction = HTRANS != HTRANS_IDLE && (HSEL == 1'b1);
+    wire            NeedAction = HTRANS != HTRANS_IDLE && (HSEL == 1'b1) && HREADY_IN;
     always @ (*) begin
         //State change decision
         case(State)

@@ -97,60 +97,33 @@ logic [3:0] wenbb;
 //-------------------------------------------------------------------------------
 // Port B memory behavioral description
 //-------------------------------------------------------------------------------
-assign wenbb = {4{wenb}} & webb;
+// assign wenbb = {4{wenb}} & webb;
 always_ff @(posedge clk) begin
-    // if (~rst) begin  
-    //     ram_block_1[0] <= 32'h01402603;
-    //     ram_block_1[1] <= 32'h00167613;
-    //     ram_block_1[2] <= 32'hfe060ce3;
-    //     ram_block_1[3] <= 32'h00000603;
-    //     ram_block_1[4] <= 32'h00c02023;
-    //     ram_block_1[5] <= 32'hfedff06f;
-
-    //     ram_block_2[0] <= 32'h01402603;
-    //     ram_block_2[1] <= 32'h00167613;
-    //     ram_block_2[2] <= 32'hfe060ce3;
-    //     ram_block_2[3] <= 32'h00000603;
-    //     ram_block_2[4] <= 32'h00c02023;
-    //     ram_block_1[5] <= 32'hfedff06f;
-    // end
     if (wenb) begin
-        // if (datab ==32'hfedff06f)
-        //     dbg_sig <= 0;
-
-        if (wenbb[0]) begin
-            ram_block_1[addrb][0+:8] <= datab[0+:8];
-            ram_block_2[addrb][0+:8] <= datab[0+:8];
-            // if(datab[8:0] == 8'b00000001)
-                // dbg_sig <= 0;
-            // else db
-        end
-        if (wenbb[1]) begin
-            ram_block_1[addrb][8+:8] <= datab[8+:8];
-            ram_block_2[addrb][8+:8] <= datab[8+:8];
-            // dbg_sig <= 0;
-        end
-        if (wenbb[2]) begin
-            ram_block_1[addrb][16+:8] <= datab[16+:8];
-            ram_block_2[addrb][16+:8] <= datab[16+:8];
-            // dbg_sig <= 0;
-        end
-        if (wenbb[3]) begin
-            ram_block_1[addrb][24+:8] <= datab[24+:8];
-            ram_block_2[addrb][24+:8] <= datab[24+:8];
-            // dbg_sig <= 0;
-        end
+        ram_block_1[addrb] <= datab;
+        ram_block_2[addrb] <= datab;
+        // if (wenbb[0]) begin
+            // ram_block_1[addrb][0+:8] <= datab[0+:8];
+            // ram_block_2[addrb][0+:8] <= datab[0+:8];
+        // end
+        // if (wenbb[1]) begin
+        //     ram_block_1[addrb][8+:8] <= datab[8+:8];
+        //     ram_block_2[addrb][8+:8] <= datab[8+:8];
+        // end
+        // if (wenbb[2]) begin
+        //     ram_block_1[addrb][16+:8] <= datab[16+:8];
+        //     ram_block_2[addrb][16+:8] <= datab[16+:8];
+        // end
+        // if (wenbb[3]) begin
+        //     ram_block_1[addrb][24+:8] <= datab[24+:8];
+        //     ram_block_2[addrb][24+:8] <= datab[24+:8];
+        // end
     end
     if(renb) begin
-        qb <= ram_block_1[addra];
+        qb <= ram_block_1[addrb];
     end
-end
-//-------------------------------------------------------------------------------
-// Port A memory behavioral description
-//-------------------------------------------------------------------------------
-always_ff @(posedge clk) begin
-    if(rena) begin 
-        qa <= ram_block_2[addra];
+    if(rena) begin
+        qa <= ram_block_1[addra];
     end
 end
 
