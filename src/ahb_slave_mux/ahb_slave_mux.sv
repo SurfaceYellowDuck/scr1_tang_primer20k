@@ -19,7 +19,7 @@ module ahb_slave_mux
         if (~rst_n)begin
             local_hsel <= 2'b0;
         end
-        else if (htrans ! = 2'b0 && hsel_s ! = 2'b0) begin
+        else if (htrans != 2'b0 && hsel_s != 2'b0) begin
             local_hsel <= hsel_s;
         end
             

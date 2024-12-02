@@ -24,8 +24,8 @@ module rom_mem
     
     logic rom_imem_need_action;
     logic rom_dmem_need_action;
-    assign rom_imem_need_action = (imem_trans ! = 2'b00) && imem_hsel;
-    assign rom_dmem_need_action = (dmem_trans ! = 2'b00) && dmem_hsel && dmem_hready_in;
+    assign rom_imem_need_action = (imem_trans != 2'b00) && imem_hsel;
+    assign rom_dmem_need_action = (dmem_trans != 2'b00) && dmem_hsel && dmem_hready_in;
     assign imem_ready           = 1'b1;
     assign imem_resp            = 1'b0;
     

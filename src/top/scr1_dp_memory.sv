@@ -79,8 +79,6 @@ localparam int unsigned RAM_SIZE_WORDS = SCR1_SIZE/SCR1_NBYTES;
 // Local signal declaration
 //-------------------------------------------------------------------------------
 (* ram_style = "block" *)  logic  [SCR1_WIDTH-1:0]  ram_block_1  [(RAM_SIZE_WORDS-1):0] /* synthesis syn_ramstyle = "block_ram" */;
-(* ram_style = "block" *)  logic  [SCR1_WIDTH-1:0]  ram_block_2  [(RAM_SIZE_WORDS-1):0] /* synthesis syn_ramstyle = "block_ram" */;
-
 
 logic [3:0] wenbb;
 //-------------------------------------------------------------------------------
@@ -89,7 +87,6 @@ logic [3:0] wenbb;
 always_ff @(posedge clk) begin
     if (wenb) begin
         ram_block_1[addrb] <= datab;
-        ram_block_2[addrb] <= datab;
     end
     if(renb) begin
         qb <= ram_block_1[addrb];
