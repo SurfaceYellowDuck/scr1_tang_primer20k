@@ -3,8 +3,8 @@
 /// @brief      Tightly-Coupled Memory (TCM)
 ///
 
-`include "../includes/scr1_memif.svh"
-`include "../includes/scr1_arch_description.svh"
+`include "scr1_memif.svh"
+`include "scr1_arch_description.svh"
 
 `ifdef SCR1_TCM_EN
 module scr1_tcm

@@ -3,8 +3,8 @@
 /// @brief      Data memory AHB bridge
 ///
 
-`include "../includes/scr1_ahb.svh"
-`include "../includes/scr1_memif.svh"
+`include "scr1_ahb.svh"
+`include "scr1_memif.svh"
 
 module scr1_dmem_ahb (
     // Control Signals

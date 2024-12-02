@@ -3,7 +3,7 @@
 /// @brief      TAPC shift register. Parameterized implementation of JTAG TAPC's Shift Register.
 ///
 
-`include "../includes/scr1_arch_description.svh"
+`include "scr1_arch_description.svh"
 
 `ifdef SCR1_DBG_EN
 module scr1_tapc_shift_reg #(

@@ -41,10 +41,8 @@ module ahb_lite_uart16550(
 
     //UART internal
     output                              UART_BAUD,  // UART baudrate output
-    output                              UART_INT,    // UART interrupt
-    output                              DBG_LED
+    output                              UART_INT    // UART interrupt
 );
-    assign DBG_LED = NeedAction ? 0 : 1;
 
     parameter   S_INIT      = 0,
                 S_IDLE      = 1,

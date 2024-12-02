@@ -3,11 +3,11 @@
 /// @brief      TAPC clock domain crossing synchronizer
 ///
 
-`include "../includes/scr1_arch_description.svh"
+`include "scr1_arch_description.svh"
 
 `ifdef SCR1_DBG_EN
-`include "../includes/scr1_tapc.svh"
-`include "../includes/scr1_dm.svh"
+`include "scr1_tapc.svh"
+`include "scr1_dm.svh"
 
 module scr1_tapc_synchronizer (
     // System common signals

@@ -15,10 +15,10 @@
  //
 //------------------------------------------------------------------------------
 
-`include "../../includes/scr1_memif.svh"
-`include "../../includes/scr1_arch_types.svh"
-`include "../../includes/scr1_riscv_isa_decoding.svh"
-`include "../../includes/scr1_arch_description.svh"
+`include "scr1_memif.svh"
+`include "scr1_arch_types.svh"
+`include "scr1_riscv_isa_decoding.svh"
+`include "scr1_arch_description.svh"
 
 module scr1_pipe_idu
 (

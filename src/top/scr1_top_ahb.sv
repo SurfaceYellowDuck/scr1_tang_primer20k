@@ -3,11 +3,11 @@
 /// @brief      SCR1 AHB top
 ///
 
-`include "../includes/scr1_arch_description.svh"
-`include "../includes/scr1_memif.svh"
-`include "../includes/scr1_ahb.svh"
+`include "scr1_arch_description.svh"
+`include "scr1_memif.svh"
+`include "scr1_ahb.svh"
 `ifdef SCR1_IPIC_EN
-`include "../includes/scr1_ipic.svh"
+`include "scr1_ipic.svh"
 `endif // SCR1_IPIC_EN
 
 `ifdef SCR1_TCM_EN

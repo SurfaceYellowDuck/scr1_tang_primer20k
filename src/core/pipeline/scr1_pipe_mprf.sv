@@ -3,8 +3,8 @@
 /// @brief      Multi Port Register File (MPRF)
 ///
 
-`include "../../includes/scr1_arch_description.svh"
-`include "../../includes/scr1_arch_types.svh"
+`include "scr1_arch_description.svh"
+`include "scr1_arch_types.svh"
 
 module scr1_pipe_mprf (
     // Common

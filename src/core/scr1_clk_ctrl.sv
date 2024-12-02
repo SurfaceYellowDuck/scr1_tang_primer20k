@@ -3,7 +3,7 @@
 /// @brief      SCR1 clock control
 ///
 
-`include "../includes/scr1_arch_description.svh"
+`include "scr1_arch_description.svh"
 
 `ifdef SCR1_CLKCTRL_EN
 module scr1_clk_ctrl (

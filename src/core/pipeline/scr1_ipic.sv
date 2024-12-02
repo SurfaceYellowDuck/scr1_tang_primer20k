@@ -31,11 +31,11 @@
  //
 //------------------------------------------------------------------------------
 
-`include "../../includes/scr1_arch_description.svh"
+`include "scr1_arch_description.svh"
 
 `ifdef SCR1_IPIC_EN
 
-`include "../../includes/scr1_ipic.svh"
+`include "scr1_ipic.svh"
 
 module scr1_ipic
 (

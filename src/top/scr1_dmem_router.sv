@@ -2,8 +2,8 @@
 /// @file       <scr1_dmem_router.sv>
 /// @brief      Data memory router
 ///
-`include "../includes/scr1_memif.svh"
-`include "../includes/scr1_arch_description.svh"
+`include "scr1_memif.svh"
+`include "scr1_arch_description.svh"
 
 module scr1_dmem_router
 #(

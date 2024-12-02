@@ -26,8 +26,8 @@
  //   - HDU Reset
 //------------------------------------------------------------------------------
 
-`include "../includes/scr1_arch_description.svh"
-`include "../includes/scr1_scu.svh"
+`include "scr1_arch_description.svh"
+`include "scr1_scu.svh"
 
 `ifdef SCR1_DBG_EN
 

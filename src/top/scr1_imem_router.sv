@@ -2,8 +2,8 @@
 /// @file       <scr1_imem_router.sv>
 /// @brief      Instruction memory router
 ///
-`include "../includes/scr1_memif.svh"
-`include "../includes/scr1_arch_description.svh"
+`include "scr1_memif.svh"
+`include "scr1_arch_description.svh"
 
 module scr1_imem_router
 #(

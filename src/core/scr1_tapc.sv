@@ -1,4 +1,4 @@
-/// Copyright by Syntacore LLC © 2016-2021. See LICENSE for details
+/// Copyright by Syntacore LLC ï¿½ 2016-2021. See LICENSE for details
 /// @file       <scr1_tapc.sv>
 /// @brief      TAP Controller (TAPC)
 ///
@@ -23,11 +23,11 @@
  //
 //------------------------------------------------------------------------------
 
-`include "../includes/scr1_arch_description.svh"
+`include "scr1_arch_description.svh"
 
 `ifdef SCR1_DBG_EN
-`include "../includes/scr1_tapc.svh"
-`include "../includes/scr1_dm.svh"
+`include "scr1_tapc.svh"
+`include "scr1_dm.svh"
 
 module scr1_tapc (
     // JTAG signals

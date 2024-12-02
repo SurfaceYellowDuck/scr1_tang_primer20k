@@ -26,7 +26,7 @@
 // TAP IDCODE
 `define SCR1_TAP_IDCODE         'hDEB11001
 
- `include "../scr1_arch_custom.svh"
+ `include "scr1_arch_custom.svh"
 
 `ifdef SCR1_ARCH_CUSTOM
 //------------------------------------------------------------------------------
@@ -51,7 +51,7 @@
 // `define SCR1_TRGT_ASIC               // target platform is ASIC
 // `define SCR1_TRGT_SIMULATION         // target is simulation (enable simulation code)
 
- `include "../scr1_arch_custom.svh"
+ `include "scr1_arch_custom.svh"
 
 `endif // SCR1_ARCH_CUSTOM
 

@@ -1,10 +1,10 @@
-/// Copyright by Syntacore LLC © 2016-2021. See LICENSE for details
+/// Copyright by Syntacore LLC ï¿½ 2016-2021. See LICENSE for details
 /// @file       <scr1_imem_ahb.sv>
 /// @brief      Instruction memory AHB bridge
 ///
 
-`include "../includes/scr1_ahb.svh"
-`include "../includes/scr1_memif.svh"
+`include "scr1_ahb.svh"
+`include "scr1_memif.svh"
 
 module scr1_imem_ahb (
     // Control Signals

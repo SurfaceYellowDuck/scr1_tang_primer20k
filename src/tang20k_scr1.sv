@@ -3,18 +3,17 @@
 /// @brief      Top-level entity with SCR1 for Tang Primer 20K board 
 ///
 
-`include "includes/scr1_arch_types.svh"
-`include "includes/scr1_arch_description.svh"
-`include "includes/scr1_ahb.svh"
-`include "includes/scr1_memif.svh"
-`include "includes/scr1_ipic.svh"
+`include "scr1_arch_types.svh"
+`include "scr1_arch_description.svh"
+`include "scr1_ahb.svh"
+`include "scr1_memif.svh"
+`include "scr1_ipic.svh"
 
 //User-defined board-specific parameters accessible as memory-mapped GPIO
-//parameter bit [31:0] FPGA_PRIMER20K_SOC_ID           = `SCR1_PTFM_SOC_ID;
-//parameter bit [31:0] FPGA_PRIMER20K_BLD_ID           = `SCR1_PTFM_BLD_ID;
+parameter bit [31:0] FPGA_PRIMER20K_SOC_ID           = `SCR1_PTFM_SOC_ID;
+parameter bit [31:0] FPGA_PRIMER20K_BLD_ID           = `SCR1_PTFM_BLD_ID;
 parameter bit [31:0] FPGA_TANG20K_CORE_CLK_FREQ    = `SCR1_PTFM_CORE_CLK_FREQ;  
-parameter            SLAVE_DEVISES_CNT             = 2;
-parameter            ROM_SIZE                      = 32768;
+
 module tang20k_scr1 (
     // === CLOCK ===========================================
     input  logic                    CLK,
@@ -264,33 +263,6 @@ assign scr1_irq = {31'd0, uart_irq};
 assign scr1_irq = uart_irq;
 `endif // SCR1_IPIC_EN
 
-// always_comb begin 
-//     if(uart_hready)begin 
-//         ahb_dmem_hready = uart_hready;
-//         ahb_dmem_hresp = uart_hresp;
-//         ahb_dmem_hrdata = uart_data;
-//     end
-//     // else if(rom_dmem_hready)begin
-//     //     ahb_dmem_hready = rom_dmem_hready;
-//     //     ahb_dmem_hresp = rom_dmem_hresp;
-//     //     ahb_dmem_hrdata = rom_dmem_data;
-//     // end
-// end
-
-
-// always_ff @(posedge cpu_clk) begin 
-//     if(ahb_imem_haddr == 32'hffef0f08) begin 
-//         LED4 <= 0;
-//     end
-//     if(ahb_imem_haddr == 32'hffef05f50) begin 
-//         LED5 <= 0;
-//     end
-//     else begin 
-//         // LED5 <= 1;
-//         // LED4 <= 1;
-//     end
-// end
-// logic [SCR1_AHB_WIDTH-1:0] uart_data;
 logic                      uart_hready;
 logic                      uart_hresp;
 logic                      uart_hsel;
@@ -337,11 +309,8 @@ i_uart(
     .UART_RI  ('1),
     .UART_DCD ('1),
 
-    .UART_INT (uart_irq),
-    .DBG_LED (LED3)
-
+    .UART_INT (uart_irq)
 );
-
 
 rom_mem 
 soc_rom_mem(
@@ -379,203 +348,6 @@ soc_ahb_slave_mux(
     
     .hrdata (ahb_dmem_hrdata),
     .hresp (ahb_dmem_hresp),
-    .hready (ahb_dmem_hready),
-    .DBG_LED (LED1),
-    .DBG_LED1 (LED2)
+    .hready (ahb_dmem_hready)
 );
-
 endmodule: tang20k_scr1
-
-module ahb_slave_mux
-(
-    input                                   clk,
-    input                                   rst_n,
-    input        [SLAVE_DEVISES_CNT-1:0]    hsel_s,
-    input        [1:0                  ]    htrans,
-
-    input        [31:0                   ]  rdata_0,
-    input        [31:0                   ]  rdata_1,
-    input        [SLAVE_DEVISES_CNT-1:0  ]  resp,
-    input        [SLAVE_DEVISES_CNT-1:0  ]  readyout,
-
-    output logic [31:0                   ]  hrdata,
-    output logic                            hresp,
-    output logic                            hready,
-    output logic                            DBG_LED,
-    output logic                            DBG_LED1
-
-);
-logic [SLAVE_DEVISES_CNT-1:0] local_hsel;
-always_ff @(posedge clk)begin 
-    if(~rst_n)begin
-        local_hsel <= 2'b0;
-    end
-    // else if(htrans != 2'b0 && hsel_s != 2'b0) begin 
-    else if(htrans != 2'b0 && hsel_s != 2'b0) begin
-        DBG_LED1 <= 1'b0;
-        local_hsel <= hsel_s;
-    end
-    // end
-    // if(hsel_s == 2'b01) begin
-    //     DBG_LED1 <= 0;
-    // end
-end
-always @* begin
-    if(local_hsel[0] == 1) begin
-        hresp = resp[0];
-        hrdata = rdata_0;
-        hready = readyout[0];
-        DBG_LED = 0;
-    end
-    else if (local_hsel[1] == 1) begin 
-        hready = readyout[1];
-        hrdata = rdata_1;
-        hresp = resp[1];
-        DBG_LED = 0;
-    end
-    else begin
-        hready = 1'b1;
-        hrdata = 32'b0;
-        hresp = 1'b0;
-        DBG_LED = 0;
-    end
-    // if(hready) begin
-    //     local_hsel = 2'b0;
-    // end
-end
-// always_ff @(posedge clk) begin
-//         if(local_hsel[0] == 1) begin 
-//             hrdata <= rdata_0;
-//             hresp <= resp[0];
-//             hready <= readyout[0];
-//             DBG_LED <= 0;
-//         end
-//         if (local_hsel[1] == 1 && local_hsel[0] == 0) begin 
-//             hrdata <= rdata_1; 
-//             hresp <= resp[1]; 
-//             hready <= readyout[1];
-//             DBG_LED <= 0;
-//         end
-//         else begin 
-//             hrdata <= 32'b0;
-//             hresp <= 1'b0;
-//             hready <= 1'b1;
-//             DBG_LED <= 0;
-//         end
-//     end
-
-
-endmodule: ahb_slave_mux
-
-module rom_mem
-(
-    input                                    clk,
-    input                                    rst_n,
-    input        [$clog2(ROM_SIZE)+1:2 ]     imem_addr,
-    input        [1:0                  ]     imem_trans,
-    input                                    imem_hsel,
-    output                                   imem_ready,
-    output                                   imem_resp,
-    output logic [SCR1_AHB_WIDTH-1:0   ]     imem_data,
-
-    input        [$clog2(ROM_SIZE)+1:2 ]     dmem_addr,
-    input        [1:0                  ]     dmem_trans,
-    input                                    dmem_hsel,
-    input                                    dmem_hready_in,
-    output reg                               dmem_ready,
-    output reg                               dmem_resp,
-    output logic [SCR1_AHB_WIDTH-1:0   ]     dmem_data
-);
-    (* ram_style = "block" *)  logic  [SCR1_AHB_WIDTH-1:0]  rom_block  [ROM_SIZE-1:0] /* synthesis syn_ramstyle = "block_ram" */;
-
-    logic rom_imem_need_action;
-    logic rom_dmem_need_action;
-    assign rom_imem_need_action = (imem_trans != 2'b00) && imem_hsel;
-    assign rom_dmem_need_action = (dmem_trans != 2'b00) && dmem_hsel && dmem_hready_in;
-    assign imem_ready = 1'b1;
-    assign imem_resp = 1'b0;
-
-    
-    always_ff @(posedge clk) begin
-            if(~rst_n) begin 
-                dmem_ready <= 1'b1;
-                dmem_resp <= 1'b0;
-            end
-            if(rom_imem_need_action) begin
-                imem_data <= rom_block[imem_addr];
-            end
-            if(rom_dmem_need_action) begin
-                dmem_data <= rom_block[dmem_addr];
-                dmem_ready <= 1'b1;
-                dmem_resp <= 1'b0;
-            end
-    end
-
-    initial begin
-        $readmemh("scbl_ksmirnov.hex", rom_block);
-    end
-endmodule: rom_mem
-
-// Do not delete, this is a loopback FSM for uart
-// **************************************************************************************************
-// logic [3 : 0] state;
-// logic test3;
-// logic test4;
-// assign LED4 = test4;
-// assign LED3 = test3;
-
-// always_ff @(posedge cpu_clk) begin
-//     if (~hard_rst_n) begin
-//         ahb_dmem_haddr <= 32'd0;
-//         ahb_dmem_htrans <= 2'b0;
-//         ahb_dmem_hwdata <= 32'b0;
-//         state <= 4'd0;
-//         test3 <= 1'b1;
-//         test4 <= 1'b1;
-//     end else begin
-//         if (state == 4'd0) begin // read LSR req
-//             ahb_dmem_haddr <= 32'd20;
-//             ahb_dmem_htrans <= 2'b10;
-//             ahb_dmem_hwrite <= 1'b0;
-//             state <= 4'd1;
-
-//         end else if (state == 4'd1) begin // wait
-//             ahb_dmem_htrans <= 2'b0; // IDLE
-//             state <= 4'd2;
-//         end else if (state == 4'd2) begin // get LSR resp
-//             test4 <= 1'b0;
-//             if (ahb_dmem_hready) begin
-//                 if (ahb_dmem_hrdata[0]) begin // fifo not empty, read char req
-//                     test3 <= 1'b0;
-//                     ahb_dmem_haddr <= 32'd0;
-//                     ahb_dmem_htrans <= 2'b10;
-//                     ahb_dmem_hwrite <= 1'b0;
-//                     state <= 4'd3;
-//                 end else begin
-//                     ahb_dmem_htrans <= 2'b0; // xfer is DONE
-//                     state <= 4'd0;
-//                 end
-//             end else begin
-//                 state <= 4'd2;
-//             end
-//         end 
-//         else if(state == 4'd3) begin // wait
-//             ahb_dmem_htrans <= 2'b0; // IDLE
-//             state <= 4'd4;
-//         end else if(state == 4'd4) begin // write 
-//             ahb_dmem_htrans <= 2'b10;
-//             ahb_dmem_hwrite <= 1'b1;
-//             state <= 4'd5;
-//         end else if(state == 4'd5) begin // wait
-//             ahb_dmem_htrans <= 2'b0; // IDLE
-//             state <= 4'd6; 
-//         end else if(state == 4'd6) begin 
-//             if(ahb_dmem_hready) begin 
-//                 ahb_dmem_htrans <= 2'b0; 
-//                 state <= 4'd0;
-//             end
-//             else state <= 4'd6;
-//         end
-//     end
-// end
-// **************************************************************************************************

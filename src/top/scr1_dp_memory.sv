@@ -3,7 +3,7 @@
 /// @brief      Dual-port synchronous memory with byte enable inputs
 ///
 
-`include "../includes/scr1_arch_description.svh"
+`include "scr1_arch_description.svh"
 
 `ifdef SCR1_TCM_EN
 module scr1_dp_memory
@@ -71,13 +71,6 @@ always_ff @(posedge clk) begin
     end
 end
 
-//-------------------------------------------------------------------------------
-// Port A memory behavioral description
-//-------------------------------------------------------------------------------
-// always_ff @(posedge clk) begin
-//     qa <= memory_array[addra];
-// end
-
 `elsif SCR1_TRGT_FPGA_GOWIN
 
 localparam int unsigned RAM_SIZE_WORDS = SCR1_SIZE/SCR1_NBYTES;
@@ -85,131 +78,31 @@ localparam int unsigned RAM_SIZE_WORDS = SCR1_SIZE/SCR1_NBYTES;
 //-------------------------------------------------------------------------------
 // Local signal declaration
 //-------------------------------------------------------------------------------
-// (* ram_style = "block" *)  logic  [SCR1_NBYTES-1:0][7:0]  ram_block_1  [(RAM_SIZE_WORDS-1):0];
-// (* ram_style = "block" *)  logic  [SCR1_NBYTES-1:0][7:0]  ram_block_2  [(RAM_SIZE_WORDS-1):0];
-
 (* ram_style = "block" *)  logic  [SCR1_WIDTH-1:0]  ram_block_1  [(RAM_SIZE_WORDS-1):0] /* synthesis syn_ramstyle = "block_ram" */;
 (* ram_style = "block" *)  logic  [SCR1_WIDTH-1:0]  ram_block_2  [(RAM_SIZE_WORDS-1):0] /* synthesis syn_ramstyle = "block_ram" */;
-
 
 
 logic [3:0] wenbb;
 //-------------------------------------------------------------------------------
 // Port B memory behavioral description
 //-------------------------------------------------------------------------------
-// assign wenbb = {4{wenb}} & webb;
 always_ff @(posedge clk) begin
     if (wenb) begin
         ram_block_1[addrb] <= datab;
         ram_block_2[addrb] <= datab;
-        // if (wenbb[0]) begin
-            // ram_block_1[addrb][0+:8] <= datab[0+:8];
-            // ram_block_2[addrb][0+:8] <= datab[0+:8];
-        // end
-        // if (wenbb[1]) begin
-        //     ram_block_1[addrb][8+:8] <= datab[8+:8];
-        //     ram_block_2[addrb][8+:8] <= datab[8+:8];
-        // end
-        // if (wenbb[2]) begin
-        //     ram_block_1[addrb][16+:8] <= datab[16+:8];
-        //     ram_block_2[addrb][16+:8] <= datab[16+:8];
-        // end
-        // if (wenbb[3]) begin
-        //     ram_block_1[addrb][24+:8] <= datab[24+:8];
-        //     ram_block_2[addrb][24+:8] <= datab[24+:8];
-        // end
     end
     if(renb) begin
         qb <= ram_block_1[addrb];
     end
+end
+//-------------------------------------------------------------------------------
+// Port A memory behavioral description
+//-------------------------------------------------------------------------------
+always_ff @(posedge clk) begin 
     if(rena) begin
         qa <= ram_block_1[addra];
     end
 end
-
-
-// (* ram_style = "block" *)  logic  [SCR1_WIDTH-1:0]  ram_block  [RAM_SIZE_WORDS-1:0];
-
-// //-------------------------------------------------------------------------------
-// // Port A memory behavioral description
-// //-------------------------------------------------------------------------------
-// always_ff @(posedge clk) begin
-//     if (~rst) begin  
-//         ram_block[0] <= 32'h01402603;
-//         ram_block[1] <= 32'h00167613;
-//         ram_block[2] <= 32'hfe060ce3;
-//         ram_block[3] <= 32'h00000603;
-//         ram_block[4] <= 32'h00c02023;
-//         ram_block[5] <= 32'hfedff06f;
-//         dbg_sig <= 0;
-//     end else if (rena) begin 
-//         if (addra == 8)begin 
-//             dbg_sig <= 1;
-//         end 
-//         qa <= ram_block[addra];
-//     end
-// end
-
-// //-------------------------------------------------------------------------------
-// // Port B memory behavioral description
-// //-------------------------------------------------------------------------------
-// always_ff @(posedge clk) begin
-//     if (renb) begin
-//         // if (addrb == 8)begin 
-//         //     dbg_sig <= 0;
-//         // end
-//         qb <= ram_block[addrb];
-//     end
-// end
-
-//-------------------------------------------------------------------------------
-// Port A memory behavioral description
-//-------------------------------------------------------------------------------
-// always_ff @(posedge clk) begin
-    // if (~rst) begin  
-        // ram_block[0] <= 32'h01402603;
-        // ram_block[1] <= 32'h00167613;//
-        // ram_block[2] <= 32'hfe060ce3;
-        // ram_block[3] <= 32'h00000603;
-        // ram_block[4] <= 32'h00c02023;
-        // ram_block[5] <= 32'hfedff06f;
-        // dbg_sig <= 0;
-    // end else if (rena) begin 
-        // if (addra == 8)begin 
-            // dbg_sig <= 1;
-        // end 
-        // qa <= ram_block[addra];
-    // end
-// end
-
-//-------------------------------------------------------------------------------
-// Port B memory behavioral description
-//-------------------------------------------------------------------------------
-// always_ff @(posedge clk) begin
-    // if (renb) begin
-        // if (addrb == 8)begin 
-        //     dbg_sig <= 0;
-        // end
-//         qb <= ram_block[addrb];
-//     end
-// end
-
-//-------------------------------------------------------------------------------
-// Port B memory behavioral description
-//-------------------------------------------------------------------------------
-//always_ff @(posedge clk) begin
-//    if (wenb) begin
-//        for (int i=0; i<SCR1_NBYTES; i++) begin
-//            if (webb[i]) begin
-//                ram_block[addrb][i*8 +: 8] <= datab[i*8 +: 8];
-//            end
-//        end
-//    end
-//    else begin
-//        qb = ram_block[addrb];
-//        qa = ram_block[addra];
-//    end
-//end
 
 `else // SCR1_TRGT_FPGA_INTEL
 
